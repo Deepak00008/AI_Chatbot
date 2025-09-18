@@ -1,0 +1,33 @@
+<div class="container">
+
+  <h2>Chat Message Management</h2>
+
+  <table class="chat-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Message</th>
+        <th>Timestamp</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let msg of chatMessages">
+        <td>{{ msg.id }}</td>
+        <td>{{ msg.user }}</td>
+        <td>{{ msg.message }}</td>
+        <td>{{ msg.timestamp }}</td>
+        <td>
+          <button class="delete-btn" (click)="deleteChatMessage(msg.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="chatMessages.length === 0" class="no-messages">
+    No chat messages available.
+  </p>
+
+</div>

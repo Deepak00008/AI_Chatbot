@@ -1,0 +1,24 @@
+<div class="dashboard-wrapper" [class.base-admin]="isBaseAdminRoute">
+
+  <!-- Navbar Component -->
+  <app-navbar></app-navbar>
+
+  <!-- Show full-page admin menu on base /admin route -->
+  <ng-container *ngIf="isBaseAdminRoute; else adminLayout">
+    <router-outlet></router-outlet>
+  </ng-container>
+
+  <!-- Dashboard Layout for child admin pages -->
+  <ng-template #adminLayout>
+    <div class="dashboard-layout">
+      <app-sidebar *ngIf="!isBaseAdminRoute"></app-sidebar>
+      <div class="dashboard-content">
+        <div class="content-container">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+
+</div>

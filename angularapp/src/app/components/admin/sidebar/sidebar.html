@@ -1,0 +1,35 @@
+<nav class="sidebar vh-100 d-flex flex-column p-3">
+  <h2 class="mb-3">Admin Menu</h2>
+  <ul class="nav nav-pills flex-column gap-2">
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center" routerLink="user-management" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-people me-2"></i>
+        <span>Users</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center" routerLink="feedback-management" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-chat-dots me-2"></i>
+        <span>Feedbacks</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center" routerLink="intent-management" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-lightbulb me-2"></i>
+        <span>Intents</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center" routerLink="chatsession-management" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-clock-history me-2"></i>
+        <span>Chat Sessions</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center" routerLink="chatmessage-management" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-envelope me-2"></i>
+        <span>Chat Messages</span>
+      </a>
+    </li>
+  </ul>
+</nav>

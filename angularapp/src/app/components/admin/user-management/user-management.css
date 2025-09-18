@@ -1,0 +1,33 @@
+.container {
+  padding: 20px;
+  background: rgba(8, 50, 32, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  border: 1px solid rgba(168,255,203,0.12);
+}
+
+h2 {
+  margin-bottom: 15px;
+  color: #a8ffcb;
+}
+
+.table-wrapper { overflow-x: auto; }
+
+.user-table { width: 100%; min-width: 900px; border-collapse: collapse; background: rgba(255,255,255,0.04); border-radius: 12px; overflow: hidden; }
+
+.user-table th,
+.user-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(168,255,203,0.12); color: #eafaf2; }
+
+.user-table td {
+  color: #f7f7f7;
+}
+
+.user-table th { background: #1a5; color: #031; }
+
+.user-table tr:hover { background: rgba(12, 80, 50, 0.32); }
+
+.delete-btn { background-color: #e74c3c; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 8px; }
+
+.delete-btn:hover { background-color: #c0392b; }
+
+.no-users { text-align: center; margin-top: 20px; font-style: italic; color: #d7f7e8; }

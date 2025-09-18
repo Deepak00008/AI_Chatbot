@@ -1,0 +1,9 @@
+.feedback-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; background: linear-gradient(135deg, #0b1b13, #0e3b24); color: #c9ffdf; padding: 24px; }
+.feedback-wrap .logo { width: 36px; height: 36px; border-radius: 8px; }
+.stars { display: flex; gap: 8px; }
+.stars button { font-size: 28px; background: transparent; border: none; color: #4a6; cursor: pointer; }
+.stars button.active { color: #6affab; }
+textarea { width: 100%; max-width: 600px; border-radius: 12px; border: 1px solid rgba(168,255,203,0.25); background: rgba(255,255,255,0.06); color: #eafaf2; padding: 12px; }
+.submit { padding: 10px 16px; border-radius: 10px; border: 1px solid rgba(168,255,203,0.25); background: #1a5; color: #031; font-weight: 700; cursor: pointer; }
+.submit:hover { background: #18a35c; }
+

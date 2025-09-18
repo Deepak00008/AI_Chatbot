@@ -1,0 +1,37 @@
+<div class="container">
+
+  <h2>Feedback Management</h2>
+
+  <div class="table-wrapper">
+    <table class="feedback-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User</th>
+          <th>Message</th>
+          <th>Rating</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let fb of feedbacks">
+          <td>{{ fb.id }}</td>
+          <td>{{ fb.userName || fb.user?.name || '—' }}</td>
+          <td class="message" title="{{ fb.message }}">{{ fb.message }}</td>
+          <td>{{ fb.rating ?? '—' }}</td>
+          <td>{{ fb.createdAt | date:'medium' }}</td>
+          <td>
+            <button class="delete-btn" (click)="deleteFeedback(fb.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p *ngIf="feedbacks.length === 0" class="no-items">
+    No feedbacks available.
+  </p>
+
+</div>

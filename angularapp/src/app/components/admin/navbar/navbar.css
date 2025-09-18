@@ -1,0 +1,42 @@
+.dashboard-header {
+  width: 100%;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  color: #fff;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand .logo { width: 28px; height: 28px; border-radius: 6px; }
+
+
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.admin-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.admin-info button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 5px 15px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.admin-info button:hover {
+  background-color: #c0392b;
+}

@@ -1,0 +1,26 @@
+.container { padding: 20px; background: rgba(8, 50, 32, 0.55); border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); border: 1px solid rgba(168,255,203,0.12); }
+
+h2 { margin-bottom: 15px; color: #a8ffcb; }
+
+.table-wrapper {
+  overflow: auto;
+}
+
+.intent-table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.04); border-radius: 12px; overflow: hidden; }
+
+.intent-table th,
+.intent-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(168,255,203,0.12); color: #eafaf2; }
+
+.intent-table td {
+  color: #000;
+}
+
+.intent-table th { background: #1a5; color: #031; font-weight: 700; }
+
+.intent-table tr:hover { background: rgba(12, 80, 50, 0.32); }
+
+.delete-btn { background-color: #e74c3c; border: none; padding: 6px 12px; color: white; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+
+.delete-btn:hover { background-color: #c0392b; }
+
+.no-intents { text-align: center; margin-top: 20px; color: #d7f7e8; font-style: italic; }

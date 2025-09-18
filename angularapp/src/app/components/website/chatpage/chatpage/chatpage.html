@@ -1,0 +1,41 @@
+<div class="chat-container">
+
+    <!-- Header -->
+    <header class="chat-header">
+      <div class="brand">
+        <img src="/assets/logo.jpeg" alt="Logo" class="logo" />
+        <h2>AI Chatbot</h2>
+      </div>
+      <button class="logout-btn" (click)="goToFeedback()">Logout</button>
+    </header>
+
+    <!-- Chat Window -->
+    <div class="chat-window">
+      <!-- Welcome state for new chats -->
+      <div class="welcome" *ngIf="messages.length === 0">
+        <h2>Hello {{ userName }}! How can I help you today?</h2>
+        <p>Ask anything. For example:</p>
+        <div class="suggestions">
+          <button type="button" (click)="userInput='Summarize today\'s news'; sendMessage()">Summarize today's news</button>
+          <button type="button" (click)="userInput='Explain quantum computing in simple terms'; sendMessage()">Explain quantum computing</button>
+          <button type="button" (click)="userInput='Create a workout plan for 3 days a week'; sendMessage()">Create a workout plan</button>
+        </div>
+      </div>
+
+      <div *ngFor="let msg of messages" [ngClass]="{'user-msg': msg.sender === 'User', 'bot-msg': msg.sender === 'Bot'}">
+        <strong>{{ msg.sender }}:</strong> {{ msg.text }}
+      </div>
+    </div>
+
+    <!-- Input Field -->
+    <div class="chat-input">
+      <input 
+        type="text" 
+        [(ngModel)]="userInput" 
+        placeholder="Type your message..." 
+        (keydown.enter)="sendMessage()" />
+
+      <button (click)="sendMessage()" [disabled]="isLoading">Send</button>
+    </div>
+
+  </div>

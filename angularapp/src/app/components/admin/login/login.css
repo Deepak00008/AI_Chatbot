@@ -1,0 +1,70 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: linear-gradient(135deg, #0b1b13, #0e3b24);
+  color: #eafaf2;
+  padding: 24px;
+}
+.login-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/admin/0_KAOkeVYKMyBc019r.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.login-container {
+  width: 360px;
+  padding: 24px;
+  border-radius: 16px;
+  background: rgba(8, 50, 32, 0.6);
+  border: 1px solid rgba(168,255,203,0.15);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+h2 { text-align: center; color: #a8ffcb; }
+
+label { display: block; margin: 10px 0 5px; }
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(168,255,203,0.25);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  color: #eafaf2;
+}
+
+.password-wrap { position: relative; display: flex; align-items: center; }
+.password-wrap input { margin: 0; padding-right: 40px; }
+.password-wrap .eye-btn { position: absolute; left: 130px; background: transparent; border: none; color: #c9ffdf; cursor: pointer; font-size: 18px; }
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top:6px;
+  background: #1a5;
+  color: #031;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:hover { background: #18a35c; }
+
+.error { color: #ff8686; margin-top: 10px; font-size: 14px; }
+.hint { color: #d7f7e8; font-size: 12px; text-align: center; margin-top: 8px; }
+
+p { text-align: center; margin-top: 15px; }
+
+a { color: #a8ffcb; text-decoration: none; font-weight: bold; }
+
+a:hover { text-decoration: underline; }

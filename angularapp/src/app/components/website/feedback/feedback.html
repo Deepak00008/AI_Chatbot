@@ -1,0 +1,11 @@
+<div class="feedback-wrap">
+  <!--<img src="/assets/logo.jpeg" alt="Logo" class="logo" />-->
+  <h2>We value your feedback</h2>
+  <div class="stars">
+    <button *ngFor="let s of [1,2,3,4,5]" (click)="setRating(s)" [class.active]="rating >= s">★</button>
+  </div>
+  <textarea [(ngModel)]="text" rows="5" placeholder="Tell us about your experience..."></textarea>
+  <button class="submit" (click)="submit()">Submit</button>
+</div>
+
+

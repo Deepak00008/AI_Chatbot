@@ -1,0 +1,52 @@
+<div class="user-landing">
+  <header class="landing-header">
+    <div class="brand">
+      <img src="/assets/logo.jpeg" alt="AI" class="logo" />
+      <h2>AI ChatBot</h2>
+    </div>
+    <div class="actions">
+      <button (click)="openLastChat()" class="start-btn">Open Last Chat</button>
+      <button (click)="login()" class="login-btn">Login</button>
+    </div>
+  </header>
+
+  <section class="features">
+    <div class="feature">
+      <h3>Smart Answers</h3>
+      <p>Ask anything and get helpful responses in seconds.</p>
+    </div>
+    <div class="feature">
+      <h3>Follow-up Friendly</h3>
+      <p>Continue the conversation naturally with context awareness.</p>
+    </div>
+    <div class="feature">
+      <h3>Secure</h3>
+      <p>Your chats stay private and secure.</p>
+    </div>
+  </section>
+
+  <section class="sessions" *ngIf="showSessions">
+    <div class="sessions-header">
+      <h3>Your past chats</h3>
+      <button class="close-btn" (click)="closeSessions()">Close</button>
+    </div>
+    <div class="sessions-list" *ngIf="sessions.length; else noSessions">
+      <div class="session-item" *ngFor="let s of sessions">
+        <div class="meta">
+          <div class="id">{{ s.id }}</div>
+          <div class="sub">{{ s.messagesCount }} messages · {{ s.updated | date:'short' }}</div>
+        </div>
+        <div class="actions">
+          <button (click)="openSession(s.id)" class="open-btn">Open</button>
+        </div>
+      </div>
+    </div>
+    <ng-template #noSessions>
+      <p class="no-sessions">No past chats. Start a new one.</p>
+    </ng-template>
+  </section>
+
+  <section class="cta">
+    <button (click)="startNewChat()" class="cta-btn">Start a new chat</button>
+  </section>
+</div>

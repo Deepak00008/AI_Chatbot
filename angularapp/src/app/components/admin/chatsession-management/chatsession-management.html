@@ -1,0 +1,33 @@
+<div class="container">
+
+  <h2>Chat Session Management</h2>
+
+  <table class="session-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Session Start</th>
+        <th>Session End</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let session of chatSessions">
+        <td>{{ session.id }}</td>
+        <td>{{ session.user }}</td>
+        <td>{{ session.sessionStart }}</td>
+        <td>{{ session.sessionEnd }}</td>
+        <td>
+          <button class="delete-btn" (click)="deleteChatSession(session.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="chatSessions.length === 0" class="no-sessions">
+    No chat sessions available.
+  </p>
+
+</div>

@@ -1,0 +1,38 @@
+/* Page */
+.signup-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; background: linear-gradient(135deg, #0b1b13, #0e3b24); color: #eafaf2; padding: 24px; }
+.signup-page::before { content: ''; position: absolute; inset: 0; background-image: url('/assets/admin/0_KAOkeVYKMyBc019r.jpg'); background-size: cover; background-position: center; opacity: 0.18; pointer-events: none; }
+.signup-container { width: 100%; display: flex; align-items: center; justify-content: center; }
+.signup-box { background: rgba(8, 50, 32, 0.6); padding: 32px; border-radius: 16px; border: 1px solid rgba(168,255,203,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.25); width: 380px; text-align: left; }
+.signup-box h2 { margin-top: 0; margin-bottom: 20px; color: #a8ffcb; text-align: center; }
+
+/* Input Group */
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #a8ffcb; }
+
+.input-group input { width: 100%; padding: 12px; border: 1px solid rgba(168,255,203,0.25); border-radius: 10px; outline: none; transition: 0.3s; background: rgba(255,255,255,0.06); color: #eafaf2; }
+
+.input-group select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.3s;
+  background: #fff;
+}
+
+.input-group input:focus { border-color: #6affab; }
+
+/* Error Message */
+.error { color: #ff8686; margin-bottom: 15px; font-size: 14px; }
+
+/* Button */
+button { width: 100%; padding: 12px; background: #1a5; color: #031; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 700; transition: 0.2s; }
+button:hover { background: #18a35c; }
+.success { color: #6affab; margin-bottom: 15px; }
+
+.input-group select { width: 100%; padding: 12px; border: 1px solid rgba(168,255,203,0.25); border-radius: 10px; outline: none; transition: 0.3s; background: rgba(255,255,255,0.06); color: #eafaf2; }

@@ -1,0 +1,33 @@
+<div class="container">
+
+  <h2>Intent Management</h2>
+
+  <div class="table-wrapper">
+    <table class="intent-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Intent Name</th>
+          <th>Description</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let intent of intents">
+          <td>{{ intent.id }}</td>
+          <td>{{ intent.name }}</td>
+          <td>{{ intent.description }}</td>
+          <td>
+            <button class="delete-btn" (click)="deleteIntent(intent.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p *ngIf="intents.length === 0" class="no-intents">
+    No intents available.
+  </p>
+
+</div>

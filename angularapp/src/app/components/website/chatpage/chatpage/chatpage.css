@@ -1,0 +1,95 @@
+body, html {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: linear-gradient(135deg, #0b1b13, #0e3b24);
+}
+
+.chat-header {
+  background: rgba(8, 50, 32, 0.6);
+  color: #c9ffdf;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(168,255,203,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chat-header .brand { display: flex; align-items: center; gap: 10px; }
+.chat-header .brand .logo { width: 24px; height: 24px; border-radius: 6px; }
+
+.logout-btn { background: #e74c3c; color: #fff; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
+.logout-btn:hover { background: #c0392b; }
+
+.chat-window {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: radial-gradient(800px 400px at 90% 0%, rgba(100, 255, 200, 0.12), transparent 60%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.welcome { text-align: center; color: #c9ffdf; margin-top: 10vh; }
+.welcome h2 { margin-bottom: 8px; }
+.welcome p { color: #d7f7e8; }
+.suggestions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 12px; }
+.suggestions button { border: 1px solid rgba(168,255,203,0.25); background: rgba(8,50,32,.6); color: #c9ffdf; padding: 8px 12px; border-radius: 999px; cursor: pointer; }
+.suggestions button:hover { background: rgba(12,80,50,.72); }
+
+.user-msg {
+  align-self: flex-end;
+  background-color: rgba(0, 123, 255, 0.2);
+  color: #eaf4ff;
+  padding: 10px 12px;
+  border-radius: 14px;
+  max-width: 70%;
+  backdrop-filter: blur(6px);
+}
+
+.bot-msg {
+  align-self: flex-start;
+  background-color: rgba(168,255,203,0.18);
+  color: #d7f7e8;
+  padding: 10px 12px;
+  border-radius: 14px;
+  max-width: 70%;
+  backdrop-filter: blur(6px);
+}
+
+.chat-input {
+  display: flex;
+  padding: 15px;
+  background: rgba(8, 50, 32, 0.6);
+  border-top: 1px solid rgba(168,255,203,0.15);
+}
+
+.chat-input input {
+  flex-grow: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(168,255,203,0.25);
+  background: rgba(255,255,255,0.06);
+  color: #eafaf2;
+  margin-right: 10px;
+}
+
+.chat-input button {
+  padding: 12px 20px;
+  background-color: #1a5;
+  color: #031;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.chat-input button:disabled {
+  background-color: #aaa;
+}
