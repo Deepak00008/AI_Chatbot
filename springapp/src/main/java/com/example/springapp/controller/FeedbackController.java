@@ -44,4 +44,11 @@ public List<Feedback> getFeedbacksByUser(@PathVariable Long userId) {
         feedbackService.deleteFeedback(id);
         return ResponseEntity.noContent().build();
     }
+    @PostMapping("/user/{userId}")
+public Feedback createFeedback(@PathVariable Long userId, @RequestBody Feedback feedback) {
+    return feedbackService.createFeedback(userId, feedback);
+}
+
+      
+    
 }
