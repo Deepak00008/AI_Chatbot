@@ -1,5 +1,7 @@
 package com.example.springapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -14,6 +16,7 @@ public class Feedback {
     // Many Feedbacks belong to One User
     @ManyToOne
     @JoinColumn(name = "user_id")  // Foreign key column in Feedback table
+    @JsonIgnoreProperties({"chatSessions", "hibernateLazyInitializer", "handler"})
     private User user;
 
     public Feedback() {}

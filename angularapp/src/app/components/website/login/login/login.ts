@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common'; // <-- Import CommonModule for *ngIf
+// import { AuthService, LoginRequest } from '../../../service/auth-service';
 
 @Component({
   selector: 'app-login',
@@ -14,49 +15,83 @@ import { CommonModule } from '@angular/common'; // <-- Import CommonModule for *
   styleUrls: ['./login.css']
 })
 export class Login {
-  email: string = '';
+  
+  usernameOrEmail: string = '';
   password: string = '';
   errorMessage: string = '';
   showPassword: boolean = false;
 
   constructor(private router: Router, private http: HttpClient) {}
 
+  private isEmail(input: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(input);
+  }
+
   login() {
-    if (!this.email || !this.password) {
-      this.errorMessage = 'Email and Password are required';
+    if (!this.usernameOrEmail || !this.password) {
+      this.errorMessage = 'Username/Email and Password are required';
       return;
     }
 
-    // Replace the URL with your backend login endpoint
+    // Clear previous errors
+    this.errorMessage = '';
+
     // Demo credentials fallback with redirect support
-    if (this.email === 'admin@example.com' && this.password === 'admin123') {
+    if (this.usernameOrEmail === 'admin@example.com' && this.password === 'admin123') {
+      // Create demo admin user data
+      const adminUser = {
+        id: 1,
+        username: 'admin',
+        email: 'admin@example.com',
+        role: 'ADMIN',
+        category: 'admin',
+        token: 'demo-admin-token'
+      };
+      localStorage.setItem('userData', JSON.stringify(adminUser));
       this.router.navigate(['/admin']);
       return;
     }
-    if (this.email === 'user@example.com' && this.password === 'user123') {
+    if (this.usernameOrEmail === 'user@example.com' && this.password === 'user123') {
+      // Create demo user data
+      const userData = {
+        id: 2,
+        username: 'user',
+        email: 'user@example.com',
+        role: 'USER',
+        category: 'student',
+        token: 'demo-user-token'
+      };
+      localStorage.setItem('userData', JSON.stringify(userData));
       const target = sessionStorage.getItem('postLoginRedirect') || '/user';
       sessionStorage.removeItem('postLoginRedirect');
       this.router.navigate([target]);
       return;
     }
 
-    this.http.post<any>('http://localhost:8080/api/login', { email: this.email, password: this.password })
-      .subscribe({
-        next: (res) => {
-          // Example: backend returns { role: 'USER' } or { role: 'ADMIN' }
-          if (res.role === 'ADMIN') {
-            this.router.navigate(['/admin']);
-          } else if (res.role === 'USER') {
-            const target = sessionStorage.getItem('postLoginRedirect') || '/user';
-            sessionStorage.removeItem('postLoginRedirect');
-            this.router.navigate([target]);
-          } else {
-            this.errorMessage = 'Invalid role received';
-          }
-        },
-        error: (err) => {
-          this.errorMessage = 'Invalid email or password';
+    const loginRequest = {
+      usernameOrEmail: this.usernameOrEmail,
+      password: this.password
+    };
+
+    this.http.post<any>('http://localhost:8080/api/auth/login', loginRequest).subscribe({
+      next: (response: any) => {
+        // Store user data in localStorage
+        localStorage.setItem('userData', JSON.stringify(response));
+        
+        // Navigate based on user role
+        if (response.role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          const target = sessionStorage.getItem('postLoginRedirect') || '/user';
+          sessionStorage.removeItem('postLoginRedirect');
+          this.router.navigate([target]);
         }
-      });
+      },
+      error: (err: any) => {
+        this.errorMessage = 'Invalid username/email or password';
+        console.error('Login error:', err);
+      }
+    });
   }
 }

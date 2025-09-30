@@ -3,10 +3,13 @@ package com.example.springapp.service;
 import com.example.springapp.model.ChatSession;
 import com.example.springapp.model.User;
 import com.example.springapp.repository.ChatSessionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import com.example.springapp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+
 import java.util.Optional;
 
 @Service
@@ -20,12 +23,15 @@ public class ChatSessionService {
         this.userRepo = userRepo;
     }
 
-    public List<ChatSession> getAllChatSessions() {
-        return chatSessionRepo.findAll();
+    public Page<ChatSession> getAllChatSessions(Pageable pageable) {
+        return chatSessionRepo.findAll(pageable);
     }
 
     public Optional<ChatSession> getChatSessionById(Long id) {
         return chatSessionRepo.findById(id);
+    }
+    public Page<ChatSession> getChatSessionsByUserId(Long userId, int page, int size) {
+        return chatSessionRepo.findByUserId(userId, PageRequest.of(page, size));
     }
 
     // Updated to accept userId

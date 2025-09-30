@@ -1,0 +1,61 @@
+<div class="profile-container">
+  <!-- Avatar Upload -->
+  <div class="avatar-section">
+    <img [src]="avatarPreview" alt="Avatar" class="avatar" />
+    <label class="file-upload">
+      <input type="file" (change)="onAvatarChange($event)" accept="image/*" />
+      Change Avatar
+    </label>
+  </div>
+
+  <!-- Profile Form -->
+  <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="form-section">
+    <label>Email</label>
+    <input type="email" formControlName="email" />
+    <div *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" class="error-message">
+      <span *ngIf="profileForm.get('email')?.errors?.['required']">Email is required</span>
+      <span *ngIf="profileForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+    </div>
+
+    <label>Username</label>
+    <input type="text" formControlName="username" />
+    <div *ngIf="profileForm.get('username')?.invalid && profileForm.get('username')?.touched" class="error-message">
+      <span *ngIf="profileForm.get('username')?.errors?.['required']">Username is required</span>
+    </div>
+
+    <button type="submit" [disabled]="!profileForm.valid">Save Profile</button>
+  </form>
+
+  <!-- Password Change -->
+  <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="form-section">
+    <label>Current Password</label>
+    <div class="password-field">
+      <input [type]="showCurrentPassword ? 'text' : 'password'" formControlName="currentPassword" />
+      <button type="button" class="icon-btn" (click)="toggleCurrentPasswordVisibility()" aria-label="Toggle current password visibility">{{ showCurrentPassword ? '🙈' : '👁️' }}</button>
+    </div>
+
+    <label>New Password</label>
+    <div class="password-field">
+      <input [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword" />
+      <button type="button" class="icon-btn" (click)="toggleNewPasswordVisibility()" aria-label="Toggle new password visibility">{{ showNewPassword ? '🙈' : '👁️' }}</button>
+    </div>
+
+    <label>Confirm New Password</label>
+    <div class="password-field">
+      <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" />
+      <button type="button" class="icon-btn" (click)="toggleConfirmPasswordVisibility()" aria-label="Toggle confirm password visibility">{{ showConfirmPassword ? '🙈' : '👁️' }}</button>
+    </div>
+
+    <div *ngIf="passwordForm.errors?.['passwordMismatch'] && passwordForm.get('confirmPassword')?.touched" class="error-message">
+      Passwords do not match
+    </div>
+
+    <button type="submit" [disabled]="!passwordForm.valid">Change Password</button>
+  </form>
+
+  <!-- Account Deletion -->
+  <div class="actions-row">
+    <button type="button" (click)="loadUserProfile()">Refresh Profile</button>
+    <button class="delete-btn" type="button" (click)="deleteAccount()">Delete Account</button>
+  </div>
+</div>

@@ -3,13 +3,14 @@ import { NgIf } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { Navbar } from "../navbar/navbar";
 import { Sidebar } from "../sidebar/sidebar";
+import { AdminMenu } from "./menu/admin-menu";
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
   standalone: true,
   styleUrls: ['./dashboard.css'],
-    imports: [RouterModule, Navbar, Sidebar, NgIf] 
+    imports: [RouterModule, Navbar, Sidebar, AdminMenu, NgIf] 
 })
 export class DashboardComponent {
 

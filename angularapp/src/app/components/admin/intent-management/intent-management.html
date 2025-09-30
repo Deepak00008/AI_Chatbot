@@ -2,13 +2,82 @@
 
   <h2>Intent Management</h2>
 
-  <div class="table-wrapper">
+  <!-- Add Intent Button -->
+  <div class="action-bar">
+    <button class="add-btn" (click)="toggleAddForm()" [disabled]="isLoading">
+      {{ showAddForm ? 'Cancel' : 'Add New Intent' }}
+    </button>
+  </div>
+
+  <!-- Add Intent Form -->
+  <div *ngIf="showAddForm" class="add-form">
+    <h3>Add New Intent</h3>
+    <form (ngSubmit)="addIntent()">
+      <div class="form-group">
+        <label for="intentName">Intent Name:</label>
+        <input 
+          type="text" 
+          id="intentName" 
+          [(ngModel)]="newIntent.name" 
+          name="intentName"
+          placeholder="e.g., greeting, goodbye, help"
+          required
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="keyword">Keyword:</label>
+        <input 
+          type="text" 
+          id="keyword" 
+          [(ngModel)]="newIntent.keyword" 
+          name="keyword"
+          placeholder="e.g., hi, hello, bye, help"
+          required
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="response">Response:</label>
+        <textarea 
+          id="response" 
+          [(ngModel)]="newIntent.response" 
+          name="response"
+          placeholder="e.g., Hello! How can I help you today?"
+          rows="3"
+          required
+        ></textarea>
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Adding...' : 'Add Intent' }}
+        </button>
+        <button type="button" class="cancel-btn" (click)="toggleAddForm()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading Message -->
+  <div *ngIf="isLoading" class="loading-message">
+    Loading intents...
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <div class="table-wrapper" *ngIf="!isLoading">
     <table class="intent-table">
       <thead>
         <tr>
           <th>ID</th>
           <th>Intent Name</th>
-          <th>Description</th>
+          <th>Keyword</th>
+          <th>Response</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -17,7 +86,8 @@
         <tr *ngFor="let intent of intents">
           <td>{{ intent.id }}</td>
           <td>{{ intent.name }}</td>
-          <td>{{ intent.description }}</td>
+          <td>{{ intent.keyword || 'N/A' }}</td>
+          <td>{{ intent.response || 'N/A' }}</td>
           <td>
             <button class="delete-btn" (click)="deleteIntent(intent.id)">Delete</button>
           </td>

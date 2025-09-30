@@ -5,7 +5,7 @@
 
   <!-- Show full-page admin menu on base /admin route -->
   <ng-container *ngIf="isBaseAdminRoute; else adminLayout">
-    <router-outlet></router-outlet>
+    <app-admin-menu></app-admin-menu>
   </ng-container>
 
   <!-- Dashboard Layout for child admin pages -->

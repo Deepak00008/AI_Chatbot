@@ -4,10 +4,11 @@ import com.example.springapp.model.Feedback;
 import com.example.springapp.model.User;
 import com.example.springapp.repository.FeedbackRepository;
 import com.example.springapp.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,11 +22,11 @@ public class FeedbackService {
         this.userRepo = userRepo;
     }
 
-    public List<Feedback> getAllFeedbacks() {
-        return feedbackRepo.findAll();
+    public Page<Feedback> getAllFeedbacks(Pageable pageable) {
+        return feedbackRepo.findAll(pageable);
     }
-       public List<Feedback> getFeedbacksByUserId(Long userId) {
-    return feedbackRepo.findByUserId(userId);
+       public Page<Feedback> getFeedbacksByUserId(Long userId, Pageable pageable) {
+    return feedbackRepo.findByUserId(userId,pageable);
 }
 
     public Optional<Feedback> getFeedbackById(Long id) {
@@ -35,9 +36,14 @@ public class FeedbackService {
 
 
     public Feedback createFeedback(Long userId, Feedback feedback) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-        feedback.setUser(user);
+        if (userId != null) {
+            User user = userRepo.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+            feedback.setUser(user);
+        } else {
+            // Allow anonymous feedback by setting user to null
+            feedback.setUser(null);
+        }
         return feedbackRepo.save(feedback);
     }
 

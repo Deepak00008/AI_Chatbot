@@ -3,10 +3,33 @@
 .signup-page::before { content: ''; position: absolute; inset: 0; background-image: url('/assets/admin/0_KAOkeVYKMyBc019r.jpg'); background-size: cover; background-position: center; opacity: 0.18; pointer-events: none; }
 .signup-container { width: 100%; display: flex; align-items: center; justify-content: center; }
 .signup-box { background: rgba(8, 50, 32, 0.6); padding: 32px; border-radius: 16px; border: 1px solid rgba(168,255,203,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.25); width: 380px; text-align: left; }
-.signup-box h2 { margin-top: 0; margin-bottom: 20px; color: #a8ffcb; text-align: center; }
+.brand { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  margin-bottom: 20px; 
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+}
+.brand .logo { 
+  width: 36px; 
+  height: 36px; 
+  border-radius: 8px; 
+  background: #133; 
+}
+.brand h2 { 
+  margin: 0; 
+  font-size: 1.5rem; 
+  letter-spacing: .3px; 
+  color: #a8ffcb; 
+}
+h3 { text-align: center; color: #a8ffcb; margin-bottom: 20px; }
 
 /* Input Group */
 .input-group {
+  
   margin-bottom: 20px;
   text-align: left;
 }
@@ -14,25 +37,58 @@
 .input-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #a8ffcb; }
 
 .input-group input { width: 100%; padding: 12px; border: 1px solid rgba(168,255,203,0.25); border-radius: 10px; outline: none; transition: 0.3s; background: rgba(255,255,255,0.06); color: #eafaf2; }
+.password-wrap { position: relative; display: flex; align-items: center; }
+.password-wrap input {  margin: 0; padding-right: 120px; }
+.password-wrap .eye-btn { position: absolute; right: -100px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #c9ffdf; cursor: pointer; font-size: 18px; }
 
 .input-group select {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 12px;
+  border: 1px solid rgba(168,255,203,0.25);
+  border-radius: 10px;
   outline: none;
   transition: 0.3s;
-  background: #fff;
+  background: rgba(0,0,0,0.4);
+  color: #eafaf2;
+  cursor: pointer;
+}
+
+.input-group select:focus { 
+  border-color: #6affab; 
+  box-shadow: 0 0 0 2px rgba(106, 255, 171, 0.2);
+}
+
+.input-group select option {
+  background: #0b1b13;
+  color: #eafaf2;
+  padding: 8px;
+}
+
+.input-group select option:hover {
+  background: rgba(106, 255, 171, 0.1);
+  color: #6affab;
+}
+
+.input-group select option:checked {
+  background: rgba(106, 255, 171, 0.2);
+  color: #050806c2;
 }
 
 .input-group input:focus { border-color: #6affab; }
 
-/* Error Message */
+/* Error Messages */
 .error { color: #ff8686; margin-bottom: 15px; font-size: 14px; }
+.error-message { color: #ff8686; margin-bottom: 15px; font-size: 14px; text-align: center; background: rgba(255, 134, 134, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255, 134, 134, 0.3); }
+.success-message { color: #6affab; margin-bottom: 15px; font-size: 14px; text-align: center; background: rgba(106, 255, 171, 0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(106, 255, 171, 0.3); }
+
+/* Field-specific error styling */
+.field-error { color: #ff8686; font-size: 12px; margin-top: 5px; margin-bottom: 10px; }
+.error-input { border-color: #ff8686 !important; background: rgba(255, 134, 134, 0.05) !important; }
+.error-input:focus { border-color: #ff8686 !important; box-shadow: 0 0 0 2px rgba(255, 134, 134, 0.2) !important; }
 
 /* Button */
-button { width: 100%; padding: 12px; background: #1a5; color: #031; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 700; transition: 0.2s; }
-button:hover { background: #18a35c; }
+button { width: 100%; padding: 12px; background: rgba(8, 50, 32, 0.6); color: #a8ffcb; border: 1px solid rgba(168,255,203,0.2); border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 700; transition: 0.2s; }
+button:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.25); background: rgba(12,80,50,.72); }
+button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 .success { color: #6affab; margin-bottom: 15px; }
 
-.input-group select { width: 100%; padding: 12px; border: 1px solid rgba(168,255,203,0.25); border-radius: 10px; outline: none; transition: 0.3s; background: rgba(255,255,255,0.06); color: #eafaf2; }

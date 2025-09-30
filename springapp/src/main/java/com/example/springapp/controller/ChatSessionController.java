@@ -3,9 +3,10 @@ package com.example.springapp.controller;
 import com.example.springapp.model.ChatSession;
 import com.example.springapp.service.ChatSessionService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/chatsessions")
@@ -17,8 +18,16 @@ public class ChatSessionController {
     }
 
     @GetMapping
-    public List<ChatSession> getAllChatSessions() {
-        return chatSessionService.getAllChatSessions();
+    public Page<ChatSession> getAllChatSessions(Pageable pageable) {
+        return chatSessionService.getAllChatSessions(pageable);
+    }
+     @GetMapping("/user/{userId}")
+    public Page<ChatSession> getChatSessionsByUser(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        return chatSessionService.getChatSessionsByUserId(userId, page, size);
     }
 
     @GetMapping("/{id}")

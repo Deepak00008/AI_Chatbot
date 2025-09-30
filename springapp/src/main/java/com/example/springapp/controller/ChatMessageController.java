@@ -3,6 +3,7 @@ package com.example.springapp.controller;
 import com.example.springapp.model.ChatMessage;
 import com.example.springapp.service.ChatMessageService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,13 @@ public class ChatMessageController {
     public List<ChatMessage> getAllChatMessages() {
         return chatMessageService.getAllChatMessages();
     }
+    @GetMapping("/session/{sessionId}")
+public Page<ChatMessage> getMessagesBySession(
+        @PathVariable Long sessionId,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size) {
+    return chatMessageService.getChatMessagesBySessionId(sessionId, page, size);
+}
 
     @GetMapping("/{id}")
     public ResponseEntity<ChatMessage> getChatMessageById(@PathVariable Long id) {

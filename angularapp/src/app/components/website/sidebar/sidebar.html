@@ -1,1 +1,18 @@
-<p>sidebar works!</p>
+<div class="sidebar" [class.collapsed]="isCollapsed">
+<div class="profile-section" (click)="triggerOpenProfile()">
+    <img [src]="user.avatar || 'assets/default-avatar.png'" alt="Avatar" class="avatar">
+    <div class="user-info" *ngIf="!isCollapsed">
+      <h3>{{ user.fullName }}</h3>
+      <p>{{ user.username }}</p>
+    </div>
+  </div>
+
+  <nav class="nav-links">
+    <a routerLink="/user" routerLinkActive="active">Dashboard</a>
+    <button type="button" class="sidebar-action" (click)="triggerOpenLastChat()">Open Last Chat</button>
+    <button type="button" class="sidebar-action" (click)="triggerStartNewChat()">Start New Chat</button>
+    <a routerLink="/chat" routerLinkActive="active">Chat</a>
+  </nav>
+</div>
+
+<!-- Profile Modal removed; handled by parent component -->

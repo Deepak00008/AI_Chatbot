@@ -43,4 +43,12 @@ public class IntentController {
         intentService.deleteIntent(id);
         return ResponseEntity.noContent().build();
     }
+
+    // New endpoint: get response by keyword
+    @GetMapping("/keyword/{keyword}")
+    public ResponseEntity<String> getResponseByKeyword(@PathVariable String keyword) {
+        return intentService.getResponseByKeyword(keyword)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

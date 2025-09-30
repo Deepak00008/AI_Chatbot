@@ -1,0 +1,123 @@
+.sidebar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(39, 80, 65, 0.884), rgba(6, 24, 18, 0.98));
+  color: #eafaf2;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+
+.avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.user-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.nav-links a {
+  color: #d7f7e8;
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid rgba(168,255,203,0.15);
+  background: rgba(8, 50, 32, 0.4);
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: background .2s ease, color .2s ease, transform .15s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: #a8ffcb;
+  background: rgba(12,80,50,.65);
+  transform: translateY(-1px);
+}
+
+/* Themed actions to match dark + green palette */
+.nav-links .sidebar-action {
+  display: block;
+  width: 100%;
+  text-align: left;
+  color: #c9ffdf;
+  font-weight: 700;
+  border: 1px solid rgba(168,255,203,0.2);
+  background: rgba(8, 50, 32, 0.6);
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background .2s ease, color .2s ease;
+}
+
+.nav-links .sidebar-action:hover,
+.nav-links .sidebar-action:focus {
+  color: #a8ffcb;
+  background: rgba(12,80,50,.72);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+}
+
+.nav-links .sidebar-action:focus-visible {
+  outline: 2px solid rgba(168,255,203,0.55);
+  outline-offset: 2px;
+}
+
+.profile-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 600px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}

@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [RouterModule],
   templateUrl: './admin-menu.html',
-  styleUrl: './admin-menu.css'
+  styleUrls: ['./admin-menu.css']
 })
 export class AdminMenu {}
 

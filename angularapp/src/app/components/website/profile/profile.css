@@ -1,0 +1,194 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #eafaf2;
+}
+
+.avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
+
+.file-upload {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(168,255,203,0.25);
+  background: rgba(8,50,32,.6);
+  color: #c9ffdf;
+  cursor: pointer;
+}
+.file-upload input[type="file"] { display: none; }
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(8, 50, 32, 0.301);
+  border: 1px solid rgba(168,255,203,0.2);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+button {
+  margin-top: 8px;
+  padding: 12px 18px;
+  background: rgba(8, 50, 32, 0.6);
+  color: #c9ffdf;
+  border: 1px solid rgba(168,255,203,0.25);
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+button:hover { 
+  background: rgba(12,80,50,.72); 
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 20px rgba(0,0,0,.3);
+  border-color: rgba(168,255,203,0.4);
+} 
+button:disabled {
+  background: rgba(26, 151, 47, 0.6);
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.delete-btn {
+  background: rgba(170, 17, 17, 0.78);
+}
+.delete-btn:hover { background: rgba(200, 40, 40, 0.78); }
+
+.actions-row { display: flex; gap: 10px; justify-content: flex-end; }
+
+label { color: #a8ffcb; font-weight: 600; }
+
+input[type="text"], input[type="email"], input[type="password"] {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(168,255,203,0.25);
+  background: rgba(77, 128, 106, 0.644);
+  color: #eafaf2;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+  outline: none;
+  border-color: rgba(168,255,203,0.6);
+  background: rgba(8, 50, 32, 0.6);
+  box-shadow: 0 0 0 2px rgba(168,255,203,0.2);
+}
+
+input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="password"]::placeholder {
+  color: #d7f7e8;
+  opacity: 0.7;
+}
+
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.password-field input { 
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(168,255,203,0.25);
+  background: rgba(77, 134, 110, 0.541);
+  color: #eafaf2;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  min-width: 0;
+}
+
+.password-field input:focus {
+  outline: none;
+  border-color: rgba(168,255,203,0.6);
+  background: rgba(8, 50, 32, 0.6);
+  box-shadow: 0 0 0 2px rgba(168,255,203,0.2);
+}
+
+.password-field input::placeholder {
+  color: #d7f7e8;
+  opacity: 0.7;
+}
+
+.password-field .icon-btn {
+  position: relative;
+  background: transparent;
+  color: #333333;
+  border: 2px solid #cccccc;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 20px;
+  min-width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.password-field .icon-btn:hover { 
+  background: #f0f0f0; 
+  transform: scale(1.1);
+  border-color: #999999;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  color: #000000;
+}
+
+.error-message {
+  color: #ff8686;
+  font-size: 12px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+/* Password form specific styling */
+.form-section:has(.password-field) {
+  background: rgba(8, 50, 32, 0.35);
+  border: 1px solid rgba(168,255,203,0.25);
+}
+
+/* Ensure password fields have proper spacing */
+.form-section:has(.password-field) .password-field:not(:last-child) {
+  margin-bottom: 8px;
+}
+
+/* Ensure icons are visible and properly sized */
+.password-field .icon-btn {
+  font-size: 18px !important;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.password-field .icon-btn:hover {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+}

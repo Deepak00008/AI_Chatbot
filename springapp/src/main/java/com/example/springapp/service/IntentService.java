@@ -30,7 +30,8 @@ public class IntentService {
     public Intent updateIntent(Long id, Intent updatedIntent) {
         return intentRepo.findById(id).map(intent -> {
             intent.setName(updatedIntent.getName());
-            intent.setDescription(updatedIntent.getDescription());
+            intent.setKeyword(updatedIntent.getKeyword());
+            intent.setResponse(updatedIntent.getResponse());
             return intentRepo.save(intent);
         }).orElseGet(() -> {
             updatedIntent.setId(id);
@@ -40,5 +41,11 @@ public class IntentService {
 
     public void deleteIntent(Long id) {
         intentRepo.deleteById(id);
+    }
+
+    // New method: get response by keyword
+    public Optional<String> getResponseByKeyword(String keyword) {
+        return intentRepo.findByKeyword(keyword)
+                         .map(Intent::getResponse);
     }
 }

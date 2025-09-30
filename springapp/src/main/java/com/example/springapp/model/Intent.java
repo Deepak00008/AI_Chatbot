@@ -7,14 +7,17 @@ public class Intent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private String description;
+
+    private String name;        // Logical name of the intent
+    private String keyword;     // Word or phrase that triggers the intent
+    private String response;    // Predefined bot response
 
     public Intent() {}
 
-    public Intent(String name, String description) {
+    public Intent(String name, String keyword, String response) {
         this.name = name;
-        this.description = description;
+        this.keyword = keyword;
+        this.response = response;
     }
 
     // Getters and Setters
@@ -22,6 +25,9 @@ public class Intent {
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getKeyword() { return keyword; }
+    public void setKeyword(String keyword) { this.keyword = keyword; }
+    public String getResponse() { return response; }
+    public void setResponse(String response) { this.response = response; }
 }
+

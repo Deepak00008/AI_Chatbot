@@ -5,6 +5,8 @@ import com.example.springapp.model.ChatSession;
 import com.example.springapp.model.Intent;
 import com.example.springapp.repository.ChatMessageRepository;
 import com.example.springapp.repository.ChatSessionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import com.example.springapp.repository.IntentRepository;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,9 @@ public class ChatMessageService {
 
     public List<ChatMessage> getAllChatMessages() {
         return chatMessageRepo.findAll();
+    }
+    public Page<ChatMessage> getChatMessagesBySessionId(Long sessionId, int page, int size) {
+        return chatMessageRepo.findByChatSessionId(sessionId, PageRequest.of(page, size));
     }
 
     public Optional<ChatMessage> getChatMessageById(Long id) {

@@ -1,31 +1,56 @@
+
+
 <div class="user-landing">
-  <header class="landing-header">
+  <nav class="navbar">
     <div class="brand">
       <img src="/assets/logo.jpeg" alt="AI" class="logo" />
       <h2>AI ChatBot</h2>
     </div>
     <div class="actions">
-      <button (click)="openLastChat()" class="start-btn">Open Last Chat</button>
-      <button (click)="login()" class="login-btn">Login</button>
+      <button (click)="openAbout()" class="menu-btn">About Us</button>
+      <button (click)="toggleSidebar()" class="menu-btn">Menu</button>
+      <button (click)="logout()" class="logout-btn">Logout</button>
     </div>
-  </header>
+  </nav>
 
+  <!-- Category-specific welcome section -->
+  <section class="welcome-section">
+    <h2>{{ getCategorySpecificContent().title }}</h2>
+    <p class="welcome-description">{{ getCategorySpecificContent().description }}</p>
+    <p class="welcome-user">Welcome, {{ userName }}!</p>
+  </section>
+
+  <!-- Category-specific features -->
   <section class="features">
-    <div class="feature">
-      <h3>Smart Answers</h3>
+    <h3>What I can help you with?</h3>
+    <div class="feature-grid">
+      <div class="feature" *ngFor="let feature of getCategorySpecificContent().features" (click)="onFeatureClick(feature)" tabindex="0" role="button" aria-label="Start chat: {{feature}}">
+        <div class="feature-icon">💡</div>
+        <p>{{ feature }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- General features -->
+  <section class="general-features">
+    <h3>General Features</h3>
+    <div class="feature" (click)="onFeatureClick('Smart Answers: Help me with general questions')" tabindex="0" role="button" aria-label="Start chat: Smart Answers">
+      <h4>Smart Answers</h4>
       <p>Ask anything and get helpful responses in seconds.</p>
     </div>
-    <div class="feature">
-      <h3>Follow-up Friendly</h3>
+    <div class="feature" (click)="onFeatureClick('Follow-up Friendly: Continue the conversation naturally')" tabindex="0" role="button" aria-label="Start chat: Follow-up Friendly">
+      <h4>Follow-up Friendly</h4>
       <p>Continue the conversation naturally with context awareness.</p>
     </div>
-    <div class="feature">
-      <h3>Secure</h3>
+    <div class="feature" (click)="onFeatureClick('Secure: Tell me about privacy and security')" tabindex="0" role="button" aria-label="Start chat: Secure">
+      <h4>Secure</h4>
       <p>Your chats stay private and secure.</p>
     </div>
   </section>
 
-  <section class="sessions" *ngIf="showSessions">
+  <!-- Sessions Modal Overlay -->
+  <div class="sessions-backdrop" *ngIf="showSessions" (click)="closeSessions()"></div>
+  <div class="sessions-modal" *ngIf="showSessions" role="dialog" aria-modal="true">
     <div class="sessions-header">
       <h3>Your past chats</h3>
       <button class="close-btn" (click)="closeSessions()">Close</button>
@@ -33,20 +58,53 @@
     <div class="sessions-list" *ngIf="sessions.length; else noSessions">
       <div class="session-item" *ngFor="let s of sessions">
         <div class="meta">
-          <div class="id">{{ s.id }}</div>
+          <div class="id">{{ s.name }}</div>
           <div class="sub">{{ s.messagesCount }} messages · {{ s.updated | date:'short' }}</div>
         </div>
         <div class="actions">
           <button (click)="openSession(s.id)" class="open-btn">Open</button>
+          <button (click)="renameSession(s.id)" class="open-btn">Rename</button>
+          <button (click)="deleteSession(s.id)" class="delete-btn">Delete</button>
         </div>
       </div>
     </div>
     <ng-template #noSessions>
       <p class="no-sessions">No past chats. Start a new one.</p>
     </ng-template>
-  </section>
-
-  <section class="cta">
-    <button (click)="startNewChat()" class="cta-btn">Start a new chat</button>
-  </section>
+  </div>
 </div>
+
+<!-- Slide-in Sidebar Overlay -->
+<div class="sidebar-backdrop" *ngIf="sidebarOpen" (click)="toggleSidebar()"></div>
+<div class="sidebar-panel" [class.open]="sidebarOpen" aria-hidden="{{!sidebarOpen}}">
+  <app-user-sidebar (openLastChat)="openLastChat()" (startNewChat)="startNewChat()" (openProfile)="openProfile()"></app-user-sidebar>
+  <button class="panel-close" (click)="toggleSidebar()">✕</button>
+  </div>
+
+<!-- Profile Modal Overlay -->
+<div class="sessions-backdrop" *ngIf="showProfile" (click)="closeProfile()"></div>
+<div class="sessions-modal" *ngIf="showProfile" role="dialog" aria-modal="true">
+  <div class="sessions-header">
+    <h3>Profile Settings</h3>
+    <button class="close-btn" (click)="closeProfile()">Close</button>
+  </div>
+  <app-user-profile></app-user-profile>
+  </div>
+
+<!-- About Us Modal Overlay -->
+<div class="sessions-backdrop" *ngIf="showAbout" (click)="closeAbout()"></div>
+<div class="sessions-modal" *ngIf="showAbout" role="dialog" aria-modal="true">
+  <div class="sessions-header">
+    <h3>About AI ChatBot</h3>
+    <button class="close-btn" (click)="closeAbout()">Close</button>
+  </div>
+  <div class="about-body">
+    <p>AI ChatBot helps you get instant answers, continue conversations with context, and explore tailored features based on your profile.</p>
+    <ul>
+      <li>Smart, contextual Q&A</li>
+      <li>Session history with naming for easy retrieval</li>
+      <li>Personalized features for students, employees, teachers, business, and farmers</li>
+      <li>Secure and private interactions</li>
+    </ul>
+  </div>
+  </div>

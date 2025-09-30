@@ -1,38 +1,91 @@
   <div class="signup-page">
     <div class="signup-container">
       <div class="signup-box">
-      <h2>AI Chatbot Signup</h2>
+      <div class="brand">
+        <img src="/assets/logo.jpeg" alt="AI" class="logo" />
+        <h2>AI ChatBot</h2>
+      </div>
+      <h3>Signup</h3>
+      
+      <!-- Success Message -->
+      <div *ngIf="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+      
+      <!-- General Error Message -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      
       <form (ngSubmit)="signup()">
         <div class="input-group">
-          <label>Name</label>
-          <input type="text" [(ngModel)]="name" name="name" placeholder="Enter name" required>
+          <label>Username</label>
+          <input type="text" [(ngModel)]="username" name="name" placeholder="Enter name" 
+                 [class.error-input]="usernameError" required>
+          <div *ngIf="usernameError" class="field-error">{{ usernameError }}</div>
         </div>
+        
         <div class="input-group">
           <label>Email</label>
-          <input type="email" [(ngModel)]="email" name="email" placeholder="Enter email" required>
+          <input type="email" [(ngModel)]="email" name="email" placeholder="Enter email" 
+                 [class.error-input]="emailError" required>
+          <div *ngIf="emailError" class="field-error">{{ emailError }}</div>
         </div>
+        
         <div class="input-group">
           <label>Password</label>
-          <input type="password" [(ngModel)]="password" name="password" placeholder="Enter password" required>
+          <div class="password-wrap">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="password"
+              name="password"
+              placeholder="Enter password"
+              [class.error-input]="passwordError"
+              required
+            />
+            <button type="button" class="eye-btn" (click)="togglePasswordVisibility()" aria-label="Toggle password visibility">
+              <span *ngIf="!showPassword">👁️</span>
+              <span *ngIf="showPassword">🙈</span>
+            </button>
+          </div>
+          <div *ngIf="passwordError" class="field-error">{{ passwordError }}</div>
         </div>
+        
         <div class="input-group">
           <label>Confirm Password</label>
-          <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>
+          <div class="password-wrap">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              placeholder="Confirm password"
+              [class.error-input]="confirmPasswordError"
+              required
+            />
+            <button type="button" class="eye-btn" (click)="toggleConfirmPasswordVisibility()" aria-label="Toggle confirm password visibility">
+              <span *ngIf="!showConfirmPassword">👁️</span>
+              <span *ngIf="showConfirmPassword">🙈</span>
+            </button>
+          </div>
+          <div *ngIf="confirmPasswordError" class="field-error">{{ confirmPasswordError }}</div>
         </div>
+        
         <div class="input-group">
           <label>Category</label>
-          <select [(ngModel)]="category" name="category" required>
-            <option value="">Select category</option>
+          <select [(ngModel)]="category" name="category" 
+                  [class.error-input]="categoryError" required>
+            <option value="">Select Category</option>
             <option value="student">Student</option>
             <option value="employee">Employee</option>
             <option value="teacher">Teacher</option>
-            <option value="business">Business person</option>
+            <option value="business">Business Person</option>
             <option value="farmer">Farmer</option>
-            <option value="other">Other</option>
+            <option value="other">Others</option>
           </select>
+          <div *ngIf="categoryError" class="field-error">{{ categoryError }}</div>
         </div>
        
-        <button type="submit">Sign Up</button>
+        <button type="submit" class="signup-btn">Sign Up</button>
         <p>Already have an account? <a routerLink="/login">Login</a></p>
       </form>
       </div>
