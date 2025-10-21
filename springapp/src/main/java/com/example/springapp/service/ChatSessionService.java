@@ -55,9 +55,16 @@ public class ChatSessionService {
 
     public ChatSession updateChatSession(Long id, ChatSession updatedSession) {
         return chatSessionRepo.findById(id).map(session -> {
-            session.setSessionName(updatedSession.getSessionName());
-            session.setStartedAt(updatedSession.getStartedAt());
-            session.setEndedAt(updatedSession.getEndedAt());
+            if (updatedSession.getSessionName() != null) {
+                session.setSessionName(updatedSession.getSessionName());
+            }
+            // Only apply timestamp fields if provided (avoid clearing existing values)
+            if (updatedSession.getStartedAt() != null) {
+                session.setStartedAt(updatedSession.getStartedAt());
+            }
+            if (updatedSession.getEndedAt() != null) {
+                session.setEndedAt(updatedSession.getEndedAt());
+            }
             // Update user if needed
             if (updatedSession.getUser() != null) {
                 session.setUser(updatedSession.getUser());

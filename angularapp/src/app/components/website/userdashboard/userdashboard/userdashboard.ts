@@ -333,13 +333,9 @@ export class UserDashboard implements OnInit {
     console.log('📝 Updating session name from', currentName, 'to', newName);
     
     // Create updated session object
-    const updatedSession: ChatSession = {
-      sessionName: newName,
-      startedAt: '', // Will be ignored by backend
-      endedAt: undefined,
-      userId: this.userId || undefined,
-      user: undefined,
-      chatMessages: []
+    const updatedSession: any = {
+      sessionName: newName
+      // Do not send startedAt/endedAt to avoid clearing them
     };
     
     // Update session in database

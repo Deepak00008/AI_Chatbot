@@ -90,7 +90,16 @@ export class ChatmessageManagement implements OnInit, OnDestroy {
         console.log('Total elements:', data.totalElements);
         console.log('=== END RESPONSE ===');
         
-        this.chatMessages = data.content || [];
+        // Sort newest messages first (by timestamp desc, then id desc)
+        const items = (data.content || []).slice();
+        items.sort((a: ChatMessage, b: ChatMessage) => {
+          const ta = a.timestamp ? new Date(a.timestamp as any).getTime() : 0;
+          const tb = b.timestamp ? new Date(b.timestamp as any).getTime() : 0;
+          if (ta !== tb) return tb - ta;
+          const ia = (a.id || 0), ib = (b.id || 0);
+          return ib - ia;
+        });
+        this.chatMessages = items;
         this.totalPages = data.totalPages || 0;
         this.totalElements = data.totalElements || 0;
         this.isLoading = false;

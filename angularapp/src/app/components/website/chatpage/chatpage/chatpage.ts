@@ -11,7 +11,7 @@ import { ChatSessionService } from '../../../../service/chat-session-service';
 import { ChatMessageService } from '../../../../service/chat-message-service';
 import { ChatSession } from '../../../../model/chat-session/chat-session-module';
 import { ChatMessage } from '../../../../model/chat-message/chat-message-module';
-import { timeout, catchError, of } from 'rxjs';
+import { timeout, catchError, of, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-user-chat',
@@ -21,7 +21,7 @@ import { timeout, catchError, of } from 'rxjs';
   imports: [FormsModule, CommonModule, HttpClientModule, UserSidebar, UserProfile]
 })
 export class ChatPage implements OnDestroy {
-  messages: { sender: string, text: string }[] = [];
+  messages: { sender: string, text: string, id?: number }[] = [];
   userInput: string = '';
   isLoading: boolean = false;
   sessionId: string | null = null;
@@ -71,6 +71,8 @@ export class ChatPage implements OnDestroy {
       }
     });
   }
+
+  // paragraph-only rendering (points formatting removed per request)
 
   sendMessage() {
     if (!this.userInput.trim() || this.isLoading) return;
@@ -168,17 +170,17 @@ export class ChatPage implements OnDestroy {
       });
   }
 
-  goToFeedback() {
+  async goToFeedback() {
     // End current session before navigating to feedback
-    this.endCurrentSession();
+    await this.endCurrentSession();
     this.router.navigate(['/feedback']);
   }
 
-  logout() {
+  async logout() {
     console.log('🚪 User logging out from chatpage, saving data to database...');
     
     // Save current session and messages to database before logout
-    this.endCurrentSession();
+    await this.endCurrentSession();
     
     // Give a moment for the session to be saved
     setTimeout(() => {
@@ -482,15 +484,40 @@ export class ChatPage implements OnDestroy {
     
     console.log('📨 Loading messages for session ID:', this.currentDbSessionId);
     
-    this.chatMessageService.getMessagesBySession(this.currentDbSessionId, 0, 100).subscribe({
+    this.chatMessageService.getMessagesBySession(this.currentDbSessionId, 0, 1000).subscribe({
       next: (response) => {
         console.log('📨 Loaded messages from database:', response.content.length, 'messages');
-        console.log('📨 Messages:', response.content.map(msg => ({ sender: msg.sender, content: msg.messageContent?.substring(0, 50) + '...' })));
         
-        this.messages = response.content.map(msg => ({
+        // Ensure chronological order
+        const sorted = (response.content || []).slice().sort((a, b) => {
+          const ta = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+          const tb = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+          if (ta !== tb) return ta - tb;
+          const ia = (a.id || 0); const ib = (b.id || 0);
+          return ia - ib;
+        });
+
+        console.log('📨 Sorted messages:', sorted.length);
+        
+        // Remove duplicates by id+content to avoid hidden last bubble
+        const unique = new Map<string, { sender: string, text: string }>();
+        sorted.forEach(msg => {
+          const key = `${msg.id || ''}_${msg.sender}_${msg.messageContent}`;
+          unique.set(key, { sender: msg.sender || 'BOT', text: msg.messageContent || '' });
+        });
+        
+        // Preserve IDs when available
+        this.messages = sorted.map(msg => ({ sender: msg.sender || 'BOT', text: msg.messageContent || '', id: msg.id }));
+        
+        // Ensure last message is visible at bottom
+        this.cdr.detectChanges();
+        this.scrollToBottom();
+
+        // Map after de-dup (kept as objects already in correct shape)
+        /* this.messages = sorted.map(msg => ({
           sender: msg.sender || 'BOT',
           text: msg.messageContent || ''
-        }));
+        })); */
         
         // Update the last saved message count to match loaded messages
         this.lastSavedMessageCount = this.messages.length;
@@ -498,8 +525,11 @@ export class ChatPage implements OnDestroy {
         console.log('📨 Processed messages for display:', this.messages.length);
         console.log('📨 Updated lastSavedMessageCount to:', this.lastSavedMessageCount);
         
-        // Manually trigger change detection to ensure UI updates
-        this.cdr.detectChanges();
+        // Manually trigger change detection again after next tick to ensure final bubble renders
+        setTimeout(() => {
+          this.cdr.detectChanges();
+          this.scrollToBottom();
+        }, 0);
       },
       error: (error) => {
         console.error('❌ Error loading messages from database:', error);
@@ -508,6 +538,7 @@ export class ChatPage implements OnDestroy {
       }
     });
   }
+  // per-message delete removed per request
 
 
   private persistSession() {
@@ -519,6 +550,7 @@ export class ChatPage implements OnDestroy {
     
     // Save to database if we have a database session
     if (this.currentDbSessionId) {
+      // Fire-and-forget during normal operation; critical paths await
       this.saveMessagesToDatabase();
     } else {
       console.log('❌ No database session ID, skipping database save');
@@ -527,16 +559,16 @@ export class ChatPage implements OnDestroy {
     // Session data is now only stored in database
   }
 
-  private saveMessagesToDatabase() {
+  private saveMessagesToDatabase(): Promise<void> {
     if (!this.currentDbSessionId) {
       console.log('❌ Cannot save message: currentDbSessionId is null');
-      return;
+      return Promise.resolve();
     }
     
     // Check if there are new messages to save
     if (this.messages.length <= this.lastSavedMessageCount) {
       console.log('📝 No new messages to save. Current:', this.messages.length, 'Saved:', this.lastSavedMessageCount);
-      return;
+      return Promise.resolve();
     }
     
     // Get the new messages that haven't been saved yet
@@ -550,83 +582,93 @@ export class ChatPage implements OnDestroy {
     });
     
     // Process messages in pairs (user + bot)
-    this.saveMessagePairs(newMessages, 0);
+    return this.saveMessagePairs(newMessages, 0);
   }
 
-  private saveMessagePairs(messages: any[], index: number) {
-    if (index >= messages.length) {
-      // All messages processed
-      this.lastSavedMessageCount = this.messages.length;
-      console.log('✅ All new messages saved. Updated lastSavedMessageCount to:', this.lastSavedMessageCount);
-      return;
-    }
-    
-    // Get the current message pair (user + bot)
-    const userMessage = messages[index];
-    const botMessage = messages[index + 1];
-    
-    if (!userMessage || !botMessage) {
-      console.log('❌ Cannot save message pair: user or bot message not found at index', index);
-      this.lastSavedMessageCount = this.messages.length;
-      return;
-    }
-    
-    console.log('💾 Saving message pair:', {
-      userMessage: userMessage.text,
-      botMessage: botMessage.text,
-      pairIndex: index / 2 + 1
-    });
-    
-    // Save user message
-    const userChatMessage: ChatMessage = {
-      messageContent: userMessage.text,
-      sender: userMessage.sender,
-      timestamp: '', // Will be set by backend @PrePersist
-      chatSession: undefined,
-      intent: undefined
-    };
-    
-    this.chatMessageService.createChatMessageWithSessionAndIntent(
-      this.currentDbSessionId!, 
-      1, // Default intent ID - should be determined from the chat response
-      userChatMessage
-    ).subscribe({
-      next: (savedUserMessage) => {
-        console.log('✅ User message saved to database with ID:', savedUserMessage.id);
-        
-        // Save bot message after user message is saved
-        const botChatMessage: ChatMessage = {
-          messageContent: botMessage.text,
-          sender: botMessage.sender,
-          timestamp: '', // Will be set by backend @PrePersist
-          chatSession: undefined,
-          intent: undefined
-        };
-        
-        this.chatMessageService.createChatMessageWithSessionAndIntent(
-          this.currentDbSessionId!, 
-          1, // Default intent ID - should be determined from the chat response
-          botChatMessage
-        ).subscribe({
-          next: (savedBotMessage) => {
-            console.log('✅ Bot message saved to database with ID:', savedBotMessage.id);
-            
-            // Process next message pair
-            this.saveMessagePairs(messages, index + 2);
-          },
-          error: (error) => {
-            console.error('❌ Error saving bot message to database:', error);
-            // Still process next pair even if this one failed
-            this.saveMessagePairs(messages, index + 2);
-          }
-        });
-      },
-      error: (error) => {
-        console.error('❌ Error saving user message to database:', error);
-        console.error('Error details:', error);
-        // Still process next pair even if this one failed
-        this.saveMessagePairs(messages, index + 2);
+  private saveMessagePairs(messages: any[], index: number): Promise<void> {
+    return new Promise<void>((resolve) => {
+      if (index >= messages.length) {
+        // All messages processed
+        this.lastSavedMessageCount = this.messages.length;
+        console.log('✅ All new messages saved. Updated lastSavedMessageCount to:', this.lastSavedMessageCount);
+        resolve();
+        return;
       }
+      
+      // Get the current message pair (user + bot)
+      const userMessage = messages[index];
+      const botMessage = messages[index + 1];
+      
+      // If there's an odd trailing message (e.g., user typed but bot didn't reply yet), save it alone
+      if (!botMessage) {
+        console.log('ℹ️ Trailing single message detected; saving last user message only.');
+      }
+      
+      if (!userMessage) {
+        console.log('❌ No user message at index', index, '- finishing');
+        this.lastSavedMessageCount = this.messages.length;
+        resolve();
+        return;
+      }
+      
+      console.log('💾 Saving message pair (or single if trailing):', {
+        userMessage: userMessage?.text,
+        botMessage: botMessage?.text,
+        pairIndex: Math.floor(index / 2) + 1
+      });
+      
+      // Save user message first
+      const userChatMessage: ChatMessage = {
+        messageContent: userMessage.text,
+        sender: userMessage.sender,
+        timestamp: '', // Will be set by backend @PrePersist
+        chatSession: undefined,
+        intent: undefined
+      };
+      
+      this.chatMessageService.createChatMessageWithSessionAndIntent(
+        this.currentDbSessionId!, 
+        1,
+        userChatMessage
+      ).subscribe({
+        next: (savedUserMessage) => {
+          console.log('✅ User message saved to database with ID:', savedUserMessage.id);
+          
+          // If no bot message, proceed to next
+          if (!botMessage) {
+            this.saveMessagePairs(messages, index + 2).then(resolve);
+            return;
+          }
+          
+          const botChatMessage: ChatMessage = {
+            messageContent: botMessage.text,
+            sender: botMessage.sender,
+            timestamp: '', // Will be set by backend @PrePersist
+            chatSession: undefined,
+            intent: undefined
+          };
+          
+          this.chatMessageService.createChatMessageWithSessionAndIntent(
+            this.currentDbSessionId!, 
+            1,
+            botChatMessage
+          ).subscribe({
+            next: (savedBotMessage) => {
+              console.log('✅ Bot message saved to database with ID:', savedBotMessage.id);
+              this.saveMessagePairs(messages, index + 2).then(resolve);
+            },
+            error: (error) => {
+              console.error('❌ Error saving bot message to database:', error);
+              this.saveMessagePairs(messages, index + 2).then(resolve);
+            }
+          });
+        },
+        error: (error) => {
+          console.error('❌ Error saving user message to database:', error);
+          console.error('Error details:', error);
+          this.saveMessagePairs(messages, index + 2).then(resolve);
+        }
+      });
     });
   }
 
@@ -775,13 +817,9 @@ export class ChatPage implements OnDestroy {
     console.log('📝 Updating session name from', currentName, 'to', newName);
     
     // Create updated session object
-    const updatedSession: ChatSession = {
-      sessionName: newName,
-      startedAt: '', // Will be ignored by backend
-      endedAt: undefined,
-      userId: this.userId || undefined,
-      user: undefined,
-      chatMessages: []
+    const updatedSession: any = {
+      sessionName: newName
+      // Do not send startedAt/endedAt to avoid clearing them
     };
     
     // Update session in database
@@ -977,28 +1015,28 @@ export class ChatPage implements OnDestroy {
 
   // Implement OnDestroy to end session when component is destroyed
   ngOnDestroy() {
+    // Best-effort; component destroy lifecycle can't await
     this.endCurrentSession();
   }
 
   // End the current session
-  private endCurrentSession() {
+  private async endCurrentSession(): Promise<void> {
     if (this.currentDbSessionId) {
       console.log('🔚 Ending session:', this.currentDbSessionId);
       
       // First, save any pending messages
-      this.saveMessagesToDatabase();
+      await this.saveMessagesToDatabase();
       
       // Use the proper backend method to end the session
-      this.chatSessionService.endChatSession(this.currentDbSessionId).subscribe({
-        next: (session) => {
-          console.log('✅ Session ended successfully:', session.id, 'Ended at:', session.endedAt);
-        },
-        error: (error) => {
-          console.error('❌ Error ending session:', error);
-        }
-      });
+      try {
+        const session = await firstValueFrom(this.chatSessionService.endChatSession(this.currentDbSessionId));
+        console.log('✅ Session ended successfully:', session.id, 'Ended at:', session.endedAt);
+      } catch (error) {
+        console.error('❌ Error ending session:', error);
+      }
     } else {
       console.log('⚠️ No currentDbSessionId found, cannot end session');
     }
+    return Promise.resolve();
   }
 }

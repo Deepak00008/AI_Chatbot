@@ -45,9 +45,22 @@ h2 { margin-bottom: 15px; color: #a8ffcb; }
 
 .session-table tr:hover { background: rgba(12, 80, 50, 0.32); }
 
-.delete-btn { background-color: #e74c3c; border: none; padding: 6px 12px; color: white; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+.delete-btn { 
+  background-color: #e74c3c; 
+  border: none; 
+  padding: 6px 12px; 
+  color: white; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  transition: 0.3s; 
+  font-size: 12px;
+  font-weight: 600;
+}
 
-.delete-btn:hover { background-color: #c0392b; }
+.delete-btn:hover { 
+  background-color: #c0392b; 
+  transform: translateY(-1px);
+}
 
 .no-sessions { text-align: center; margin-top: 20px; color: #d7f7e8; font-style: italic; }
 
@@ -137,4 +150,17 @@ h2 { margin-bottom: 15px; color: #a8ffcb; }
   color: #a8ffcb;
   font-weight: 500;
   font-size: 14px;
+}
+
+/* Active session indicator */
+.active-session {
+  color: #4CAF50;
+  font-weight: 600;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }

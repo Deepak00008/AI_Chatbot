@@ -80,6 +80,10 @@ body, html {
   backdrop-filter: blur(10px);
 }
 
+/* bullet list rendering removed */
+
+/* message delete UI removed */
+
 .chat-input {
   display: flex;
   padding: 15px;

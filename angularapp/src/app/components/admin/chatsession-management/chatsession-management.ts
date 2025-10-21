@@ -20,6 +20,7 @@ export class ChatSessionManagement implements OnInit, OnDestroy {
   totalPages: number = 0;
   totalElements: number = 0;
   private currentRequest: any = null;
+  private autoRefreshHandle: any = null;
 
   constructor(
     private chatSessionService: ChatSessionService,
@@ -28,6 +29,10 @@ export class ChatSessionManagement implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadChatSessions();
+    // Auto-refresh briefly to catch recent logout updates
+    this.autoRefreshHandle = setInterval(() => {
+      this.loadPageDirectly(this.currentPage);
+    }, 5000);
   }
 
   loadChatSessions(): void {
@@ -49,13 +54,38 @@ export class ChatSessionManagement implements OnInit, OnDestroy {
       next: (data: any) => {
         console.log('Page loaded successfully:', data);
         
-        this.chatSessions = data.content || [];
+        // Sort by most recent first (endedAt desc, then startedAt desc)
+        const items = (data.content || []).slice();
+        items.sort((a: ChatSession, b: ChatSession) => {
+          const aEnd = a.endedAt ? new Date(a.endedAt as any).getTime() : 0;
+          const bEnd = b.endedAt ? new Date(b.endedAt as any).getTime() : 0;
+          if (aEnd !== bEnd) return bEnd - aEnd;
+          const aStart = a.startedAt ? new Date(a.startedAt as any).getTime() : 0;
+          const bStart = b.startedAt ? new Date(b.startedAt as any).getTime() : 0;
+          return bStart - aStart;
+        });
+        this.chatSessions = items;
         this.totalPages = data.totalPages || 0;
         this.totalElements = data.totalElements || 0;
         this.isLoading = false;
         this.currentRequest = null;
         this.cdr.detectChanges();
         console.log('Page load completed - sessions:', this.chatSessions.length);
+        
+        // Debug: Log session end times
+        this.chatSessions.forEach((session, index) => {
+          console.log(`Session ${index + 1}:`, {
+            id: session.id,
+            sessionName: session.sessionName,
+            startedAt: session.startedAt,
+            endedAt: session.endedAt,
+            endedAtType: typeof session.endedAt,
+            endedAtNull: session.endedAt === null,
+            endedAtUndefined: session.endedAt === undefined,
+            endedAtEmpty: session.endedAt === '',
+            endedAtTrimmed: session.endedAt ? session.endedAt.trim() : 'N/A'
+          });
+        });
       },
       error: (error) => {
         console.error('Error loading page:', error);
@@ -66,6 +96,7 @@ export class ChatSessionManagement implements OnInit, OnDestroy {
       }
     });
   }
+
 
   deleteChatSession(id: number): void {
     if (!confirm('Are you sure you want to delete this chat session?')) return;
@@ -101,6 +132,10 @@ export class ChatSessionManagement implements OnInit, OnDestroy {
     // Clean up any pending requests
     if (this.currentRequest) {
       this.currentRequest.unsubscribe();
+    }
+    if (this.autoRefreshHandle) {
+      clearInterval(this.autoRefreshHandle);
+      this.autoRefreshHandle = null;
     }
   }
 
