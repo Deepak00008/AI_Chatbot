@@ -10,7 +10,7 @@ import { PageResponse } from '../model/common/page-response';
   providedIn: 'root'
 })
 export class FeedbackService {
-  private baseUrl = 'http://localhost:8080/api/feedbacks'; // update if your backend uses a different path
+  private baseUrl = 'http://localhost:8083/api/feedbacks'; // update if your backend uses a different path
 
   constructor(private http: HttpClient) {}
 

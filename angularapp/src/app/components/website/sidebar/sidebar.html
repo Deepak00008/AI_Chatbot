@@ -1,9 +1,9 @@
 <div class="sidebar" [class.collapsed]="isCollapsed">
 <div class="profile-section" (click)="triggerOpenProfile()">
-    <img [src]="user.avatar || 'assets/default-avatar.png'" alt="Avatar" class="avatar">
+    <img [src]="avatarUrl || getDefaultAvatar()" alt="Avatar" class="avatar">
     <div class="user-info" *ngIf="!isCollapsed">
-      <h3>{{ user.fullName }}</h3>
-      <p>{{ user.username }}</p>
+      <h3>{{ user.fullName || user.username || 'User' }}</h3>
+      <p>{{ user.category || 'User' }}</p>
     </div>
   </div>
 
@@ -13,6 +13,29 @@
     <button type="button" class="sidebar-action" (click)="triggerStartNewChat()">Start New Chat</button>
     <a routerLink="/chat" routerLinkActive="active">Chat</a>
   </nav>
+
+  <!-- Footer Section -->
+  <div class="sidebar-footer" *ngIf="!isCollapsed">
+    <div class="footer-links">
+      <a href="#" (click)="openHelp($event)" class="footer-link">Help & Support</a>
+      <a href="#" (click)="openContact($event)" class="footer-link">Contact Us</a>
+      <a href="#" (click)="openPrivacy($event)" class="footer-link">Privacy Policy</a>
+      <a href="#" (click)="openTerms($event)" class="footer-link">Terms of Service</a>
+    </div>
+    <div class="footer-copyright">
+      <p>&copy; {{ currentYear }} AI ChatBot. All rights reserved.</p>
+      <p class="footer-version">Version 1.0.0</p>
+    </div>
+  </div>
+
+  <!-- Collapsed Footer -->
+  <div class="sidebar-footer-collapsed" *ngIf="isCollapsed">
+    <div class="footer-icon" (click)="openHelp($event)" title="Help & Support">❓</div>
+    <div class="footer-icon" (click)="openContact($event)" title="Contact Us">📧</div>
+    <div class="footer-copyright-mini">
+      <p>&copy; {{ currentYear }}</p>
+    </div>
+  </div>
 </div>
 
 <!-- Profile Modal removed; handled by parent component -->

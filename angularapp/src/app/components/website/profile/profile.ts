@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from '../../../service/user-service';
 import { ChangePasswordDTO } from '../../../dto/change-password.dto';
-// import { AuthService } from '../../../service/auth-service';
+import { AuthService } from '../../../service/auth-service';
 
 @Component({
   selector: 'app-user-profile',
@@ -22,7 +22,7 @@ export class UserProfile implements OnInit {
   showNewPassword = false;
   showConfirmPassword = false;
 
-  constructor(private fb: FormBuilder, private userService: UserService) {
+  constructor(private fb: FormBuilder, private userService: UserService, private authService: AuthService) {
     // Initialize forms immediately in constructor
     this.profileForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -41,9 +41,8 @@ export class UserProfile implements OnInit {
   }
 
   loadUserProfile() {
-    // Get current user from localStorage
-    const userData = localStorage.getItem('userData');
-    const currentUser = userData ? JSON.parse(userData) : null;
+    // Get current user from AuthService
+    const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
       this.user = currentUser;
       
@@ -57,46 +56,24 @@ export class UserProfile implements OnInit {
               username: data.username
             });
           }
-          this.avatarPreview = data.avatar || currentUser.avatar || this.getDefaultAvatar();
+          this.avatarPreview = this.getAvatarUrl(data.avatar) || this.getAvatarUrl(currentUser.avatar) || this.getDefaultAvatar();
         }, (error) => {
-          console.log('Backend not available, using auth service data');
-          // Fallback to localStorage data
-          this.loadFromLocalStorage();
+          console.error('Error loading user profile from database:', error);
+          alert('Unable to load profile data. Please refresh the page.');
         });
       } else {
-        // No backend ID, use localStorage data directly
-        this.loadFromLocalStorage();
+        // No backend ID - user needs to log in properly
+        console.error('No user ID available for profile loading');
+        alert('Unable to load profile. Please log out and log back in.');
       }
     } else {
-      console.error('No user found in auth service');
-      // Set default values
-      if (this.profileForm) {
-        this.profileForm.patchValue({
-          email: '',
-          username: ''
-        });
-      }
-      this.avatarPreview = this.getDefaultAvatar();
+      // No current user - redirect to login
+      console.error('No user found in AuthService');
+      alert('Please log in to access your profile.');
+      window.location.href = '/login';
     }
   }
 
-  private loadFromLocalStorage() {
-    const userData = localStorage.getItem('userData');
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        if (this.profileForm) {
-          this.profileForm.patchValue({
-            email: user.email || '',
-            username: user.username || ''
-          });
-        }
-        this.avatarPreview = user.avatar || this.getDefaultAvatar();
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-      }
-    }
-  }
 
   onAvatarChange(event: any) {
     const file = event.target.files[0];
@@ -116,15 +93,7 @@ export class UserProfile implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         this.avatarPreview = reader.result;
-        
-        // Update user data in localStorage
-        const currentUser = this.userService.getCurrentUser();
-        if (currentUser) {
-          currentUser.avatar = reader.result as string;
-          localStorage.setItem('userData', JSON.stringify(currentUser));
-          this.user.avatar = reader.result as string;
-          console.log('Avatar updated locally');
-        }
+        console.log('Avatar preview updated');
       };
       reader.readAsDataURL(file);
 
@@ -133,11 +102,10 @@ export class UserProfile implements OnInit {
         this.userService.uploadAvatar(this.user.id, file).subscribe(
           (response) => {
             console.log('Avatar uploaded to backend successfully');
-            // Update localStorage with backend response if needed
-            const currentUser = this.userService.getCurrentUser();
-            if (currentUser && response.avatar) {
-              currentUser.avatar = response.avatar;
-              localStorage.setItem('userData', JSON.stringify(currentUser));
+            // Update the avatar preview with the correct URL from database
+            if (response.avatar) {
+              this.avatarPreview = this.getAvatarUrl(response.avatar);
+              this.user.avatar = response.avatar;
             }
           },
           (error) => {
@@ -161,17 +129,20 @@ export class UserProfile implements OnInit {
         this.userService.updateProfile(this.user.id, updatedData).subscribe(
           (updatedUser) => {
             this.user = updatedUser;
-            // Update auth service with new data
-            const userData = localStorage.getItem('userData');
-            if (userData) {
-              try {
-                const currentUser = JSON.parse(userData);
-                currentUser.email = updatedUser.email;
-                currentUser.username = updatedUser.username;
-                localStorage.setItem('userData', JSON.stringify(currentUser));
-              } catch (error) {
-                console.error('Error updating user data:', error);
+            // Update AuthService with new data - create LoginResponse object
+            const currentUser = this.authService.getCurrentUser();
+            if (currentUser) {
+              const updatedLoginResponse = {
+                ...currentUser,
+                email: updatedUser.email,
+                username: updatedUser.username,
+                avatar: updatedUser.avatar
+              };
+              // Update avatar preview if avatar was updated
+              if (updatedUser.avatar) {
+                this.avatarPreview = this.getAvatarUrl(updatedUser.avatar);
               }
+              this.authService.updateUserData(updatedLoginResponse);
             }
             alert('Profile updated successfully!');
             console.log('Profile updated successfully');
@@ -182,21 +153,9 @@ export class UserProfile implements OnInit {
           }
         );
       } else {
-        // Update auth service only (no backend ID available)
-        const userData = localStorage.getItem('userData');
-        if (userData) {
-          try {
-            const currentUser = JSON.parse(userData);
-            currentUser.email = this.profileForm.value.email;
-            currentUser.username = this.profileForm.value.username;
-            localStorage.setItem('userData', JSON.stringify(currentUser));
-            this.user = currentUser;
-          } catch (error) {
-            console.error('Error updating user data:', error);
-          }
-          alert('Profile updated successfully!');
-          console.log('Profile updated locally');
-        }
+        // No backend ID available - user needs to log in properly
+        alert('Unable to update profile. Please log out and log back in.');
+        console.error('No user ID available for profile update');
       }
     } else if (!this.user) {
       alert('Please log in to update your profile.');
@@ -265,9 +224,9 @@ export class UserProfile implements OnInit {
           this.userService.deleteAccount(this.user.id).subscribe(
             () => {
               alert('Account deleted successfully!');
-            // Clear auth service and redirect to login
-            localStorage.removeItem('userData');
-            window.location.href = '/login';
+              // Clear auth service and redirect to login
+              this.authService.logout();
+              window.location.href = '/login';
             },
             (error) => {
               console.error('Error deleting account:', error);
@@ -275,10 +234,9 @@ export class UserProfile implements OnInit {
             }
           );
         } else {
-          // No backend ID - just clear auth service
-          alert('Account deleted locally!');
-          localStorage.removeItem('userData');
-          window.location.href = '/login';
+          // No backend ID - user needs to log in properly
+          alert('Unable to delete account. Please log out and log back in.');
+          console.error('No user ID available for account deletion');
         }
       }
     } else {
@@ -289,6 +247,28 @@ export class UserProfile implements OnInit {
   private passwordMatchValidator(form: FormGroup) {
     return form.get('newPassword')?.value === form.get('confirmPassword')?.value
       ? null : { passwordMismatch: true };
+  }
+
+  private getAvatarUrl(avatar: string | null | undefined): string | null {
+    if (!avatar) return null;
+    
+    // If it's already a data URL (starts with 'data:'), return as is
+    if (avatar.startsWith('data:')) {
+      return avatar;
+    }
+    
+    // If it's a relative path from backend, prepend the backend URL
+    if (avatar.startsWith('/uploads/')) {
+      return 'http://localhost:8083' + avatar;
+    }
+    
+    // If it's already a full URL, return as is
+    if (avatar.startsWith('http')) {
+      return avatar;
+    }
+    
+    // Default case - treat as relative path
+    return 'http://localhost:8083/uploads/' + avatar;
   }
 
   private getDefaultAvatar(): string {

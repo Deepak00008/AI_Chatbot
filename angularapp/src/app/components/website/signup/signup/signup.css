@@ -39,7 +39,7 @@ h3 { text-align: center; color: #a8ffcb; margin-bottom: 20px; }
 .input-group input { width: 100%; padding: 12px; border: 1px solid rgba(168,255,203,0.25); border-radius: 10px; outline: none; transition: 0.3s; background: rgba(255,255,255,0.06); color: #eafaf2; }
 .password-wrap { position: relative; display: flex; align-items: center; }
 .password-wrap input {  margin: 0; padding-right: 120px; }
-.password-wrap .eye-btn { position: absolute; right: -100px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #c9ffdf; cursor: pointer; font-size: 18px; }
+.password-wrap .eye-btn { width:50px; position: absolute; right: 0px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #c9ffdf; cursor: pointer; font-size: 18px; }
 
 .input-group select {
   width: 100%;

@@ -53,7 +53,11 @@
   <div class="sessions-modal" *ngIf="showSessions" role="dialog" aria-modal="true">
     <div class="sessions-header">
       <h3>Your past chats</h3>
-      <button class="close-btn" (click)="closeSessions()">Close</button>
+      <div class="header-actions">
+        <button class="cleanup-btn" (click)="cleanupInvalidSessions()" title="Check for invalid sessions">🧹</button>
+        <button class="refresh-btn" (click)="refreshSessions()" title="Refresh sessions">🔄</button>
+        <button class="close-btn" (click)="closeSessions()">Close</button>
+      </div>
     </div>
     <div class="sessions-list" *ngIf="sessions.length; else noSessions">
       <div class="session-item" *ngFor="let s of sessions">
@@ -77,7 +81,7 @@
 <!-- Slide-in Sidebar Overlay -->
 <div class="sidebar-backdrop" *ngIf="sidebarOpen" (click)="toggleSidebar()"></div>
 <div class="sidebar-panel" [class.open]="sidebarOpen" aria-hidden="{{!sidebarOpen}}">
-  <app-user-sidebar (openLastChat)="openLastChat()" (startNewChat)="startNewChat()" (openProfile)="openProfile()"></app-user-sidebar>
+  <app-user-sidebar #sidebar (openLastChat)="openLastChat()" (startNewChat)="startNewChat()" (openProfile)="openProfile()"></app-user-sidebar>
   <button class="panel-close" (click)="toggleSidebar()">✕</button>
   </div>
 

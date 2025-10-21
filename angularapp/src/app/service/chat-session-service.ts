@@ -10,12 +10,12 @@ import { PageResponse } from '../model/common/page-response';
   providedIn: 'root'
 })
 export class ChatSessionService {
-  private baseUrl = 'http://localhost:8080/api/chatsessions';
+  private baseUrl = 'http://localhost:8083/api/chatsessions';
 
   constructor(private http: HttpClient) {}
 
   // Get all chat sessions with pagination (matches backend)
-  getChatSessions(page: number = 0, size: number = 5): Observable<PageResponse<ChatSession>> {
+  getChatSessions(page: number = 0, size: number = 10): Observable<PageResponse<ChatSession>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -28,7 +28,7 @@ export class ChatSessionService {
   }
 
   // Get chat sessions by user ID with pagination (matches backend endpoint)
-  getChatSessionsByUser(userId: number, page: number = 0, size: number = 5): Observable<PageResponse<ChatSession>> {
+  getChatSessionsByUser(userId: number, page: number = 0, size: number = 10): Observable<PageResponse<ChatSession>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());
@@ -53,5 +53,10 @@ export class ChatSessionService {
   // Delete a chat session
   deleteChatSession(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
+
+  // End a chat session (set endedAt timestamp)
+  endChatSession(id: number): Observable<ChatSession> {
+    return this.http.put<ChatSession>(`${this.baseUrl}/${id}/end`, {});
   }
 }

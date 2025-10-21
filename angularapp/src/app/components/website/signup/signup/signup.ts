@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-// import { AuthService, RegisterRequest } from '../../../service/auth-service';
+import { AuthService, RegisterRequest } from '../../../../service/auth-service';
 
 @Component({
   selector: 'app-user-signup',
@@ -31,7 +31,7 @@ export class Signup {
   confirmPasswordError: string = '';
   categoryError: string = '';
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private authService: AuthService) {}
 
   signup() {
     // Clear previous errors
@@ -89,27 +89,26 @@ export class Signup {
     }
 
     // If all validations pass, register with backend
-    const registerRequest = {
+    const registerRequest: RegisterRequest = {
       username: this.username,
       email: this.email,
       password: this.password,
       category: this.category
     };
 
-    this.http.post<any>('http://localhost:8080/api/auth/register', registerRequest).subscribe({
+    this.authService.register(registerRequest).subscribe({
       next: (response: any) => {
-        // Store user data in localStorage
-        localStorage.setItem('userData', JSON.stringify(response));
+        console.log('User registration successful:', response);
         
-        this.successMessage = 'Registration successful!';
-        setTimeout(() => {
-          // Navigate based on user role
-          if (response.role === 'ADMIN') {
-            this.router.navigate(['/admin']);
-          } else {
-            this.router.navigate(['/user']);
-          }
-        }, 1500);
+        // Show popup message
+        alert('Registration successful! Welcome to our platform.');
+        
+        // Navigate based on user role
+        if (response.role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/user']);
+        }
       },
       error: (err: any) => {
         this.errorMessage = 'Registration failed. Username or email may already exist.';

@@ -1,12 +1,15 @@
 <div class="container">
 
-  <h2>Intent Management</h2>
-
-  <!-- Add Intent Button -->
-  <div class="action-bar">
-    <button class="add-btn" (click)="toggleAddForm()" [disabled]="isLoading">
-      {{ showAddForm ? 'Cancel' : 'Add New Intent' }}
-    </button>
+  <div class="header-section">
+    <h2>Intent Management</h2>
+    <div class="header-actions">
+      <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+        {{ isLoading ? 'Loading...' : 'Refresh' }}
+      </button>
+      <button class="add-btn" (click)="toggleAddForm()" [disabled]="isLoading">
+        {{ showAddForm ? 'Cancel' : 'Add New Intent' }}
+      </button>
+    </div>
   </div>
 
   <!-- Add Intent Form -->
@@ -68,6 +71,9 @@
   <!-- Error Message -->
   <div *ngIf="errorMessage" class="error-message">
     {{ errorMessage }}
+    <button class="retry-btn" (click)="retryLoad()" [disabled]="isLoading">
+      {{ isLoading ? 'Retrying...' : 'Retry' }}
+    </button>
   </div>
 
   <div class="table-wrapper" *ngIf="!isLoading">
@@ -89,14 +95,35 @@
           <td>{{ intent.keyword || 'N/A' }}</td>
           <td>{{ intent.response || 'N/A' }}</td>
           <td>
-            <button class="delete-btn" (click)="deleteIntent(intent.id)">Delete</button>
+            <button class="delete-btn" (click)="deleteIntent(intent.id!)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === 0 || isLoading"
+        (click)="onPageChange(currentPage - 1)">
+        {{ isLoading ? 'Loading...' : 'Previous' }}
+      </button>
+      
+      <span class="page-info">
+        Page {{ currentPage + 1 }} of {{ totalPages }} ({{ totalElements }} total)
+      </span>
+      
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage >= totalPages - 1 || isLoading"
+        (click)="onPageChange(currentPage + 1)">
+        {{ isLoading ? 'Loading...' : 'Next' }}
+      </button>
+    </div>
   </div>
 
-  <p *ngIf="intents.length === 0" class="no-intents">
+  <p *ngIf="intents.length === 0 && !isLoading" class="no-intents">
     No intents available.
   </p>
 

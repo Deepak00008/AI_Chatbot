@@ -44,6 +44,8 @@ public class FeedbackService {
             // Allow anonymous feedback by setting user to null
             feedback.setUser(null);
         }
+        
+        // Timestamps will be automatically set by @PrePersist annotation
         return feedbackRepo.save(feedback);
     }
 
@@ -52,6 +54,7 @@ public class FeedbackService {
             feedback.setMessage(updatedFeedback.getMessage());
             feedback.setRating(updatedFeedback.getRating());
             // Optional: Update user reference if needed
+            // updatedAt will be automatically set by @PreUpdate annotation
             return feedbackRepo.save(feedback);
         }).orElseGet(() -> {
             updatedFeedback.setId(id);

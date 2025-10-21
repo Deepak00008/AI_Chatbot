@@ -10,13 +10,18 @@ import { ChangePasswordDTO } from '../dto/change-password.dto';
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl = 'http://localhost:8080/api/users'; // Backend base URL
+  private baseUrl = 'http://localhost:8083/api/users'; // Backend base URL
 
   constructor(private http: HttpClient) {}
 
   // 🔹 Get all users
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.baseUrl);
+  }
+
+  // 🔹 Get paginated users
+  getUsersPaginated(page: number, size: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/paginated?page=${page}&size=${size}`);
   }
 
   // 🔹 Get a single user by ID

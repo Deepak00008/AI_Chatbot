@@ -28,23 +28,23 @@ export class DashboardComponent {
 
   // Navigation functions
   goToUsers() {
-    this.router.navigate(['/admin/users']);
+    this.router.navigate(['/admin/user-management']);
   }
 
   goToFeedbacks() {
-    this.router.navigate(['/admin/feedbacks']);
+    this.router.navigate(['/admin/feedback-management']);
   }
 
   goToIntents() {
-    this.router.navigate(['/admin/intents']);
+    this.router.navigate(['/admin/intent-management']);
   }
 
   goToChatSessions() {
-    this.router.navigate(['/admin/chatsessions']);
+    this.router.navigate(['/admin/chatsession-management']);
   }
 
   goToChatMessages() {
-    this.router.navigate(['/admin/chatmessages']);
+    this.router.navigate(['/admin/chatmessage-management']);
   }
 
   logout() {

@@ -1,32 +1,73 @@
 <div class="container">
 
-  <h2>Chat Session Management</h2>
+  <div class="header-section">
+    <h2>Chat Session Management</h2>
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+      {{ isLoading ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
 
-  <table class="session-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>User</th>
-        <th>Session Start</th>
-        <th>Session End</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+  <!-- Loading Message -->
+  <div *ngIf="isLoading" class="loading-message">
+    Loading chat sessions...
+  </div>
 
-    <tbody>
-      <tr *ngFor="let session of chatSessions">
-        <td>{{ session.id }}</td>
-        <td>{{ session.user }}</td>
-        <td>{{ session.sessionStart }}</td>
-        <td>{{ session.sessionEnd }}</td>
-        <td>
-          <button class="delete-btn" (click)="deleteChatSession(session.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="retryLoad()" [disabled]="isLoading">
+      {{ isLoading ? 'Retrying...' : 'Retry' }}
+    </button>
+  </div>
 
-  <p *ngIf="chatSessions.length === 0" class="no-sessions">
+  <div class="table-wrapper" *ngIf="!isLoading">
+    <table class="session-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User ID</th>
+          <th>Session Start</th>
+          <th>Session End</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let session of chatSessions">
+          <td>{{ session.id }}</td>
+          <td>{{ session.user?.id || session.userId || 'N/A' }}</td>
+          <td>{{ session.startedAt | date:'medium' }}</td>
+          <td>{{ session.endedAt ? (session.endedAt | date:'medium') : 'Active' }}</td>
+          <td>
+            <button class="delete-btn" (click)="deleteChatSession(session.id!)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === 0 || isLoading"
+        (click)="onPageChange(currentPage - 1)">
+        {{ isLoading ? 'Loading...' : 'Previous' }}
+      </button>
+      
+      <span class="page-info">
+        Page {{ currentPage + 1 }} of {{ totalPages }} ({{ totalElements }} total)
+      </span>
+      
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage >= totalPages - 1 || isLoading"
+        (click)="onPageChange(currentPage + 1)">
+        {{ isLoading ? 'Loading...' : 'Next' }}
+      </button>
+    </div>
+  </div>
+
+  <p *ngIf="chatSessions.length === 0 && !isLoading" class="no-sessions">
     No chat sessions available.
   </p>
 

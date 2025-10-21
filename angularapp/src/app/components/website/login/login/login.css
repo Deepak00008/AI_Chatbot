@@ -79,14 +79,14 @@ input {
 
 .password-wrap { position: relative; display: flex; align-items: center; }
 .password-wrap input { margin: 0; padding-right: 40px; }
-.password-wrap .eye-btn { position: absolute; left: 130px; background: transparent; border: none; color: #c9ffdf; cursor: pointer; font-size: 18px; }
+.password-wrap .eye-btn { display: flex; align-items:center; height:40px;width:40px ;position: absolute; right: 0px; background: transparent; border: none; color: #c9ffdf; cursor: pointer; font-size: 18px; }
 
 button {
   width: 100%;
   padding: 12px;
   margin-top:6px;
-  background: #1a5;
-  color: #031;
+  background: rgba(7, 202, 95, 0.849);
+  color: white;
   font-weight: 700;
   border: none;
   border-radius: 10px;

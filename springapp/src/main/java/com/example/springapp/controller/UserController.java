@@ -3,6 +3,7 @@ package com.example.springapp.controller;
 import com.example.springapp.model.User;
 import com.example.springapp.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
@@ -26,6 +27,21 @@ public class UserController {
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    // ✅ Get paginated users
+    @GetMapping("/paginated")
+    public Page<User> getAllUsersPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return userService.getAllUsersPaginated(page, size);
+    }
+
+    // ✅ Clear users cache
+    @PostMapping("/clear-cache")
+    public ResponseEntity<String> clearUsersCache() {
+        userService.clearUsersCache();
+        return ResponseEntity.ok("Users cache cleared successfully");
     }
 
     // ✅ Get user by ID

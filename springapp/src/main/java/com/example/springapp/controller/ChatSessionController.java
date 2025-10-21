@@ -18,14 +18,16 @@ public class ChatSessionController {
     }
 
     @GetMapping
-    public Page<ChatSession> getAllChatSessions(Pageable pageable) {
-        return chatSessionService.getAllChatSessions(pageable);
+    public Page<ChatSession> getAllChatSessions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return chatSessionService.getAllChatSessions(page, size);
     }
      @GetMapping("/user/{userId}")
     public Page<ChatSession> getChatSessionsByUser(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "10") int size) {
 
         return chatSessionService.getChatSessionsByUserId(userId, page, size);
     }
@@ -51,5 +53,22 @@ public class ChatSessionController {
     public ResponseEntity<Void> deleteChatSession(@PathVariable Long id) {
         chatSessionService.deleteChatSession(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/end")
+    public ResponseEntity<ChatSession> endChatSession(@PathVariable Long id) {
+        try {
+            ChatSession endedSession = chatSessionService.endChatSession(id);
+            return ResponseEntity.ok(endedSession);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // Clear all chat sessions (for testing)
+    @DeleteMapping("/clear-all")
+    public ResponseEntity<String> clearAllChatSessions() {
+        chatSessionService.clearAllChatSessions();
+        return ResponseEntity.ok("All chat sessions cleared successfully");
     }
 }

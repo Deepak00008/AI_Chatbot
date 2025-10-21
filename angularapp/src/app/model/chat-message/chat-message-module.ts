@@ -8,6 +8,8 @@ export interface ChatMessage {
   sender: string;              // "USER" or "BOT"
   messageContent: string;
   timestamp: string;           // ISO string (maps to LocalDateTime)
+  createdAt?: string;          // creation timestamp
+  updatedAt?: string;          // last update timestamp
   chatSession?: ChatSession;   // optional to avoid circular reference
   intent?: Intent;             // optional, linked intent
 }

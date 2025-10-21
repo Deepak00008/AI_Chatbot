@@ -1,27 +1,43 @@
 package com.example.springapp.controller;
 
-import com.example.springapp.service.IntentService;
+import com.example.springapp.service.ChatService;
+import com.example.springapp.service.ChatMessageService;
+import com.example.springapp.service.ChatSessionService;
+import com.example.springapp.model.ChatMessage;
+import com.example.springapp.model.ChatSession;
+import com.example.springapp.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/chat")
 public class ChatController {
     
-    private final IntentService intentService;
+    private final ChatService chatService;
+    private final ChatMessageService chatMessageService;
+    private final ChatSessionService chatSessionService;
     
-    public ChatController(IntentService intentService) {
-        this.intentService = intentService;
+    public ChatController(ChatService chatService, ChatMessageService chatMessageService, ChatSessionService chatSessionService) {
+        this.chatService = chatService;
+        this.chatMessageService = chatMessageService;
+        this.chatSessionService = chatSessionService;
     }
     
     @PostMapping
-    public ResponseEntity<Map<String, String>> processMessage(@RequestBody Map<String, String> request) {
-        String message = request.get("message");
-        String sessionId = request.get("sessionId");
+    public ResponseEntity<Map<String, String>> processMessage(@RequestBody Map<String, Object> request) {
+        System.out.println("=== CHAT REQUEST RECEIVED ===");
+        System.out.println("Request: " + request);
+        
+        String message = (String) request.get("message");
+        String sessionId = (String) request.get("sessionId");
+        Object userIdObj = request.get("userId");
+        
+        System.out.println("Message: " + message);
+        System.out.println("SessionId: " + sessionId);
+        System.out.println("UserId: " + userIdObj);
         
         if (message == null || message.trim().isEmpty()) {
             Map<String, String> response = new HashMap<>();
@@ -29,8 +45,52 @@ public class ChatController {
             return ResponseEntity.ok(response);
         }
         
-        // Simple keyword-based response using Intent service
-        String response = getResponseForMessage(message);
+        // Use the intelligent ChatService for processing
+        System.out.println("Processing message through ChatService...");
+        String response = chatService.processMessage(message, sessionId);
+        System.out.println("ChatService response: " + response);
+        
+        // Save both user message and bot response to database
+        try {
+            Long userId = 1L; // Default to user 1
+            if (userIdObj != null) {
+                if (userIdObj instanceof Number) {
+                    userId = ((Number) userIdObj).longValue();
+                } else if (userIdObj instanceof String) {
+                    userId = Long.parseLong((String) userIdObj);
+                }
+            }
+            
+            // Find or create session
+            ChatSession session = findOrCreateSession(sessionId, userId);
+            
+            // Save user message
+            ChatMessage userMessage = new ChatMessage();
+            userMessage.setSender("USER");
+            userMessage.setMessageContent(message);
+            // Timestamp will be set by @PrePersist annotation
+            
+            System.out.println("Saving user message: " + message);
+            System.out.println("Session ID: " + session.getId());
+            
+            ChatMessage savedUserMessage = chatMessageService.createChatMessage(session.getId(), userId, userMessage);
+            System.out.println("User message saved with ID: " + savedUserMessage.getId());
+            
+            // Save bot response
+            ChatMessage botMessage = new ChatMessage();
+            botMessage.setSender("BOT");
+            botMessage.setMessageContent(response);
+            // Timestamp will be set by @PrePersist annotation
+            
+            System.out.println("Saving bot message: " + response);
+            ChatMessage savedBotMessage = chatMessageService.createChatMessage(session.getId(), userId, botMessage);
+            System.out.println("Bot message saved with ID: " + savedBotMessage.getId());
+            
+        } catch (Exception e) {
+            System.err.println("Error saving messages to database: " + e.getMessage());
+            e.printStackTrace();
+            // Continue with response even if saving fails
+        }
         
         Map<String, String> chatResponse = new HashMap<>();
         chatResponse.put("reply", response);
@@ -39,32 +99,34 @@ public class ChatController {
         return ResponseEntity.ok(chatResponse);
     }
     
-    private String getResponseForMessage(String message) {
-        // Extract keywords from the message
-        String[] words = message.toLowerCase().split("\\s+");
-        
-        for (String word : words) {
+    private ChatSession findOrCreateSession(String sessionId, Long userId) {
+        // Try to find existing session by sessionName
+        if (sessionId != null) {
             try {
-                Optional<String> response = intentService.getResponseByKeyword(word);
-                if (response.isPresent()) {
-                    return response.get();
-                }
+                return chatSessionService.findBySessionName(sessionId)
+                    .orElseGet(() -> createNewSession(sessionId, userId));
             } catch (Exception e) {
-                // Continue to next word
+                return createNewSession(sessionId, userId);
             }
         }
-        
-        // Default responses based on common patterns
-        if (message.toLowerCase().contains("hello") || message.toLowerCase().contains("hi")) {
-            return "Hello! How can I help you today?";
-        } else if (message.toLowerCase().contains("help")) {
-            return "I'm here to help! You can ask me questions about various topics. What would you like to know?";
-        } else if (message.toLowerCase().contains("thank")) {
-            return "You're welcome! Is there anything else I can help you with?";
-        } else if (message.toLowerCase().contains("bye") || message.toLowerCase().contains("goodbye")) {
-            return "Goodbye! Have a great day!";
-        } else {
-            return "I understand you're asking about: \"" + message + "\". Could you please provide more details so I can help you better?";
+        return createNewSession("New Session", userId);
+    }
+    
+    private ChatSession createNewSession(String sessionName, Long userId) {
+        // Get the user object first
+        User user = chatSessionService.getUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("User not found with ID: " + userId);
         }
+        
+        ChatSession session = new ChatSession();
+        session.setSessionName(sessionName);
+        // startedAt will be set by @PrePersist annotation
+        session.setUser(user);
+        
+        // Save the session to get an ID
+        ChatSession savedSession = chatSessionService.createChatSession(session);
+        System.out.println("Created new session with ID: " + savedSession.getId());
+        return savedSession;
     }
 }

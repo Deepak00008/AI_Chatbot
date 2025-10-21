@@ -1,13 +1,32 @@
 <div class="container">
 
-  <h2>Feedback Management</h2>
+  <div class="header-section">
+    <h2>Feedback Management</h2>
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+      {{ isLoading ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
 
-  <div class="table-wrapper">
+  <!-- Loading Message -->
+  <div *ngIf="isLoading" class="loading-message">
+    Loading feedbacks...
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="retryLoad()" [disabled]="isLoading">
+      {{ isLoading ? 'Retrying...' : 'Retry' }}
+    </button>
+  </div>
+
+  <div class="table-wrapper" *ngIf="!isLoading">
     <table class="feedback-table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>User</th>
+          <th>Feedback ID</th>
+          <th>User ID</th>
+          <th>Username</th>
           <th>Message</th>
           <th>Rating</th>
           <th>Date</th>
@@ -17,20 +36,55 @@
 
       <tbody>
         <tr *ngFor="let fb of feedbacks">
-          <td>{{ fb.id }}</td>
-          <td>{{ fb.userName || fb.user?.name || '—' }}</td>
+          <td class="id-cell">{{ fb.id }}</td>
+          <td class="user-id-cell">
+            <span *ngIf="fb.user?.id" class="user-id-badge">{{ fb.user?.id }}</span>
+            <span *ngIf="!fb.user?.id" class="no-user-id">Anonymous</span>
+          </td>
+          <td class="username-cell">
+            <span *ngIf="fb.userName || fb.user?.username" class="username">
+              {{ fb.userName || fb.user?.username }}
+            </span>
+            <span *ngIf="!fb.userName && !fb.user?.username" class="anonymous-user">
+              Anonymous User
+            </span>
+          </td>
           <td class="message" title="{{ fb.message }}">{{ fb.message }}</td>
-          <td>{{ fb.rating ?? '—' }}</td>
-          <td>{{ fb.createdAt | date:'medium' }}</td>
-          <td>
-            <button class="delete-btn" (click)="deleteFeedback(fb.id)">Delete</button>
+          <td class="rating-cell">
+            <span *ngIf="fb.rating" class="rating-badge">{{ fb.rating }}/5</span>
+            <span *ngIf="!fb.rating" class="no-rating">—</span>
+          </td>
+          <td class="date-cell">{{ fb.createdAt | date:'medium' }}</td>
+          <td class="actions-cell">
+            <button class="delete-btn" (click)="deleteFeedback(fb.id!)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === 0 || isLoading"
+        (click)="onPageChange(currentPage - 1)">
+        {{ isLoading ? 'Loading...' : 'Previous' }}
+      </button>
+      
+      <span class="page-info">
+        Page {{ currentPage + 1 }} of {{ totalPages }} ({{ totalElements }} total)
+      </span>
+      
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage >= totalPages - 1 || isLoading"
+        (click)="onPageChange(currentPage + 1)">
+        {{ isLoading ? 'Loading...' : 'Next' }}
+      </button>
+    </div>
   </div>
 
-  <p *ngIf="feedbacks.length === 0" class="no-items">
+  <p *ngIf="feedbacks.length === 0 && !isLoading" class="no-items">
     No feedbacks available.
   </p>
 

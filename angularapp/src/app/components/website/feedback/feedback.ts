@@ -94,24 +94,27 @@ export class FeedbackPage {
       };
     }
 
+    console.log('Submitting feedback:', feedback);
+    
     this.feedbackService.createFeedback(feedback).subscribe({
       next: (response) => {
-        this.successMessage = 'Thank you for your feedback!';
+        console.log('Feedback submitted successfully:', response);
+        
+        // Show popup message
+        alert('Feedback submitted successfully! Thank you for your valuable feedback.');
+        
         this.isSubmitting = false;
         // Clear form
         this.text = '';
         this.rating = 0;
-        // Navigate after a short delay - only if user is logged in
-        if (currentUser && isLoggedIn) {
-          setTimeout(() => {
-            this.router.navigate(['/user']);
-          }, 2000);
-        }
+        
+        // Navigate to login page after successful submission
+        this.router.navigate(['/login']);
       },
       error: (err) => {
+        console.error('Feedback submission error:', err);
         this.errorMessage = 'Failed to submit feedback. Please try again.';
         this.isSubmitting = false;
-        console.error('Feedback submission error:', err);
       }
     });
   }

@@ -10,7 +10,7 @@ import { PageResponse } from '../model/common/page-response';
   providedIn: 'root'
 })
 export class ChatMessageService {
-  private baseUrl = 'http://localhost:8080/api/chatmessages';
+  private baseUrl = 'http://localhost:8083/api/chatmessages';
 
   constructor(private http: HttpClient) {}
 
@@ -19,13 +19,21 @@ export class ChatMessageService {
     return this.http.get<ChatMessage[]>(this.baseUrl);
   }
 
+  // Get all chat messages with pagination
+  getAllChatMessagesPaginated(page: number = 0, size: number = 10): Observable<any> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<any>(`${this.baseUrl}/paginated`, { params });
+  }
+
   // Get chat message by ID
   getChatMessageById(id: number): Observable<ChatMessage> {
     return this.http.get<ChatMessage>(`${this.baseUrl}/${id}`);
   }
 
   // Get messages by session ID with pagination (matches backend endpoint)
-  getMessagesBySession(sessionId: number, page: number = 0, size: number = 5): Observable<PageResponse<ChatMessage>> {
+  getMessagesBySession(sessionId: number, page: number = 0, size: number = 10): Observable<PageResponse<ChatMessage>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString());

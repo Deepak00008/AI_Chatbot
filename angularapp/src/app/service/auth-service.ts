@@ -31,7 +31,7 @@ export interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8080/api/auth';
+  private baseUrl = 'http://localhost:8083/api/auth';
   private currentUserSubject = new BehaviorSubject<LoginResponse | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -72,7 +72,25 @@ export class AuthService {
 
   // Get current user
   getCurrentUser(): LoginResponse | null {
-    return this.currentUserSubject.value;
+    // First try to get from current subject
+    let user = this.currentUserSubject.value;
+    
+    // If not available, try to load from localStorage
+    if (!user) {
+      const userData = localStorage.getItem('userData');
+      if (userData) {
+        try {
+          user = JSON.parse(userData);
+          // Update the subject with the loaded user
+          this.currentUserSubject.next(user);
+        } catch (error) {
+          console.error('Error parsing user data from localStorage:', error);
+          localStorage.removeItem('userData');
+        }
+      }
+    }
+    
+    return user;
   }
 
   // Check if user is logged in

@@ -29,6 +29,10 @@ public class ChatMessageService {
     public List<ChatMessage> getAllChatMessages() {
         return chatMessageRepo.findAll();
     }
+
+    public Page<ChatMessage> getAllChatMessagesPaginated(int page, int size) {
+        return chatMessageRepo.findAll(PageRequest.of(page, size));
+    }
     public Page<ChatMessage> getChatMessagesBySessionId(Long sessionId, int page, int size) {
         return chatMessageRepo.findByChatSessionId(sessionId, PageRequest.of(page, size));
     }
@@ -47,6 +51,14 @@ public class ChatMessageService {
 
         chatMessage.setChatSession(session);
         chatMessage.setIntent(intent);
+        
+        // Timestamps will be automatically set by @PrePersist annotation
+
+        System.out.println("Creating chat message for session ID: " + sessionId);
+        System.out.println("Message content: " + chatMessage.getMessageContent());
+        System.out.println("Sender: " + chatMessage.getSender());
+        System.out.println("Timestamp: " + chatMessage.getTimestamp());
+        System.out.println("User ID from session: " + (session.getUser() != null ? session.getUser().getId() : "null"));
 
         return chatMessageRepo.save(chatMessage);
     }

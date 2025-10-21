@@ -100,6 +100,11 @@ body, html {
   outline: none;
 }
 
+.chat-input input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .chat-input input:focus {
   border-color: #a8ffcb;
   box-shadow: 0 0 0 2px rgba(168, 255, 203, 0.2);
@@ -211,6 +216,47 @@ body, html {
 .sessions-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.55); backdrop-filter: blur(2px); z-index: 1100; }
 .sessions-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85vw; max-width: 500px; max-height: 80vh; overflow: auto; background: rgba(6, 28, 20, 0.96); border: 1px solid rgba(168,255,203,0.15); border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,.5); z-index: 1101; padding: 20px;color:white; }
 .sessions-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;color:white; }
+
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.refresh-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(168,255,203,0.2);
+  background: rgba(8, 50, 32, 0.6);
+  color: #c9ffdf;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  background: rgba(12,80,50,.72);
+}
+
+.cleanup-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(168,255,203,0.2);
+  background: rgba(8, 50, 32, 0.6);
+  color: #c9ffdf;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.cleanup-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  background: rgba(12,80,50,.72);
+}
+
 .close-btn { padding: 6px 10px; border-radius: 8px; border: 1px solid rgb(168, 255, 203); background: rgba(8,50,32,.6); color: #c9ffdf; cursor: pointer; }
 .close-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,.25); background: rgba(12,80,50,.72); }
 .sessions-list { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow: auto; }
@@ -230,3 +276,18 @@ body, html {
 .sidebar-panel app-user-sidebar { display: block; height: 100%; overflow-y: auto; }
 .panel-close { position: absolute; top: 10px; right: 10px; background: rgba(8,50,32,.6); border: 1px solid rgba(168,255,203,0.25); color: #c9ffdf; border-radius: 8px; padding: 6px 10px; cursor: pointer; }
 .panel-close:hover { background: rgba(12,80,50,.72); }
+
+/* Loading Spinner */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(168,255,203,0.3);
+  border-top: 2px solid #a8ffcb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

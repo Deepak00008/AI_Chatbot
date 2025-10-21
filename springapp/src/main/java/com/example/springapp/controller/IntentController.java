@@ -3,6 +3,7 @@ package com.example.springapp.controller;
 import com.example.springapp.model.Intent;
 import com.example.springapp.service.IntentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,13 @@ public class IntentController {
     @GetMapping
     public List<Intent> getAllIntents() {
         return intentService.getAllIntents();
+    }
+
+    @GetMapping("/paginated")
+    public Page<Intent> getAllIntentsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return intentService.getAllIntentsPaginated(page, size);
     }
 
     @GetMapping("/{id}")

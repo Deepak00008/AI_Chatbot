@@ -2,6 +2,8 @@ package com.example.springapp.service;
 
 import com.example.springapp.model.Intent;
 import com.example.springapp.repository.IntentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,10 @@ public class IntentService {
 
     public List<Intent> getAllIntents() {
         return intentRepo.findAll();
+    }
+
+    public Page<Intent> getAllIntentsPaginated(int page, int size) {
+        return intentRepo.findAll(PageRequest.of(page, size));
     }
 
     public Optional<Intent> getIntentById(Long id) {

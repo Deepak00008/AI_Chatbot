@@ -28,8 +28,8 @@
         </div>
       </div>
 
-      <div *ngFor="let msg of messages" [ngClass]="{'user-msg': msg.sender === 'User', 'bot-msg': msg.sender === 'Bot'}">
-        <strong>{{ msg.sender }}:</strong> {{ msg.text }}
+      <div *ngFor="let msg of messages" [ngClass]="{'user-msg': msg.sender === 'USER', 'bot-msg': msg.sender === 'BOT'}">
+        <strong>{{ msg.sender === 'USER' ? 'User' : 'Bot' }}:</strong> {{ msg.text }}
       </div>
     </div>
 
@@ -41,12 +41,15 @@
         placeholder="Type your message..." 
         (keydown)="onKeyDown($event)"
         (focus)="onInputFocus()"
-        (blur)="onInputBlur()" />
+        (blur)="onInputBlur()"
+        [disabled]="isLoading"
+        #messageInput />
 
-      <button (click)="sendMessage()" [disabled]="isLoading" class="send-btn" title="Send message">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <button (click)="sendMessage()" [disabled]="isLoading || !userInput.trim()" class="send-btn" title="Send message">
+        <svg *ngIf="!isLoading" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M2.01 21L23 12L2.01 3L2 10L17 12L2 14L2.01 21Z" fill="currentColor"/>
         </svg>
+        <div *ngIf="isLoading" class="loading-spinner"></div>
       </button>
     </div>
 
@@ -57,7 +60,11 @@
 <div class="sessions-modal" *ngIf="showSessions" role="dialog" aria-modal="true">
   <div class="sessions-header">
     <h3>Your past chats</h3>
-    <button class="close-btn" (click)="closeSessions()">Close</button>
+      <div class="header-actions">
+        <button class="cleanup-btn" (click)="cleanupDuplicateMessages()" title="Cleanup duplicate messages">🧹</button>
+        <button class="refresh-btn" (click)="refreshSessions()" title="Refresh sessions">🔄</button>
+        <button class="close-btn" (click)="closeSessions()">Close</button>
+      </div>
   </div>
   <div class="sessions-list" *ngIf="sessions.length; else noSessions">
     <div class="session-item" *ngFor="let s of sessions">

@@ -38,6 +38,11 @@ public class AuthenticationService {
         
         User user = userOptional.get();
         
+        // Check if user has a valid password
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            throw new RuntimeException("User account is not properly configured. Please contact support.");
+        }
+        
         // Verify password
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid username/email or password");

@@ -8,6 +8,9 @@ export interface ChatSession {
   sessionName: string;       // name of the session
   startedAt: string;         // using ISO string (maps to LocalDateTime in backend)
   endedAt?: string;          // optional, may not be set until session ends
-  userId?: number;               // reference to the user who owns this session
+  createdAt?: string;        // creation timestamp
+  updatedAt?: string;        // last update timestamp
+  userId?: number;           // reference to the user who owns this session (for backward compatibility)
+  user?: User;               // user object (preferred)
   chatMessages?: ChatMessage[]; // list of chat messages in the session
 }

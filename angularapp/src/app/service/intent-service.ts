@@ -9,13 +9,18 @@ import { Intent } from '../model/intent/intent-module';
   providedIn: 'root'
 })
 export class IntentService {
-  private baseUrl = 'http://localhost:8080/api/intents'; // adjust if your backend uses a different path
+  private baseUrl = 'http://localhost:8083/api/intents'; // adjust if your backend uses a different path
 
   constructor(private http: HttpClient) {}
 
   // Get all intents
   getIntents(): Observable<Intent[]> {
     return this.http.get<Intent[]>(this.baseUrl);
+  }
+
+  // Get paginated intents
+  getIntentsPaginated(page: number, size: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/paginated?page=${page}&size=${size}`);
   }
 
   // Get intent by ID

@@ -1,32 +1,77 @@
 <div class="container">
 
-  <h2>Chat Message Management</h2>
+  <div class="header-section">
+    <h2>Chat Message Management</h2>
+    <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+      {{ isLoading ? 'Loading...' : 'Refresh' }}
+    </button>
+  </div>
 
-  <table class="chat-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>User</th>
-        <th>Message</th>
-        <th>Timestamp</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+  <!-- Loading Message -->
+  <div *ngIf="isLoading" class="loading-message">
+    Loading chat messages...
+  </div>
 
-    <tbody>
-      <tr *ngFor="let msg of chatMessages">
-        <td>{{ msg.id }}</td>
-        <td>{{ msg.user }}</td>
-        <td>{{ msg.message }}</td>
-        <td>{{ msg.timestamp }}</td>
-        <td>
-          <button class="delete-btn" (click)="deleteChatMessage(msg.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="retryLoad()" [disabled]="isLoading">
+      {{ isLoading ? 'Retrying...' : 'Retry' }}
+    </button>
+  </div>
 
-  <p *ngIf="chatMessages.length === 0" class="no-messages">
+  <div class="table-wrapper" *ngIf="!isLoading">
+    <table class="chat-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User ID</th>
+          <th>Message</th>
+          <th>Sender</th>
+          <th>Session ID</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let msg of chatMessages">
+          <td>{{ msg.id }}</td>
+          <td>{{ msg.chatSession?.user?.id || msg.chatSession?.userId || 'N/A' }}</td>
+          <td class="message-cell" title="{{ msg.messageContent }}">{{ msg.messageContent }}</td>
+          <td>{{ msg.sender }}</td>
+          <td>{{ msg.chatSession?.id || 'N/A' }}</td>
+          <td>{{ msg.timestamp | date:'medium' }}</td>
+          <td>
+            <button class="delete-btn" (click)="deleteChatMessage(msg.id!)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === 0 || isLoading"
+        (click)="onPageChange(currentPage - 1)">
+        {{ isLoading ? 'Loading...' : 'Previous' }}
+      </button>
+      
+      <span class="page-info">
+        Page {{ currentPage + 1 }} of {{ totalPages }} ({{ totalElements }} total)
+      </span>
+      
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage >= totalPages - 1 || isLoading"
+        (click)="onPageChange(currentPage + 1)">
+        {{ isLoading ? 'Loading...' : 'Next' }}
+      </button>
+    </div>
+  </div>
+
+  <p *ngIf="chatMessages.length === 0 && !isLoading" class="no-messages">
     No chat messages available.
   </p>
 

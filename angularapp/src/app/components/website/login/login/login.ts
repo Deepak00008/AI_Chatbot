@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common'; // <-- Import CommonModule for *ngIf
-// import { AuthService, LoginRequest } from '../../../service/auth-service';
+import { AuthService, LoginRequest } from '../../../../service/auth-service';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +21,7 @@ export class Login {
   errorMessage: string = '';
   showPassword: boolean = false;
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private authService: AuthService) {}
 
   private isEmail(input: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -69,15 +69,14 @@ export class Login {
       return;
     }
 
-    const loginRequest = {
+    const loginRequest: LoginRequest = {
       usernameOrEmail: this.usernameOrEmail,
       password: this.password
     };
 
-    this.http.post<any>('http://localhost:8080/api/auth/login', loginRequest).subscribe({
+    this.authService.login(loginRequest).subscribe({
       next: (response: any) => {
-        // Store user data in localStorage
-        localStorage.setItem('userData', JSON.stringify(response));
+        console.log('User login successful:', response);
         
         // Navigate based on user role
         if (response.role === 'ADMIN') {

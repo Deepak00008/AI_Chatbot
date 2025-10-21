@@ -1,15 +1,41 @@
 <div class="container">
 
-  <h2>User Management</h2>
+  <div class="header-section">
+    <div class="title-section">
+      <h2>User Management</h2>
+      <p class="last-refresh" *ngIf="lastRefreshTime">Last updated: {{ lastRefreshTime }}</p>
+    </div>
+    <div class="button-section">
+      <button class="refresh-btn" (click)="refreshData()" [disabled]="isLoading">
+        <span *ngIf="!isLoading">🔄 Refresh</span>
+        <span *ngIf="isLoading">Loading...</span>
+      </button>
+    </div>
+  </div>
 
-  <div class="table-wrapper">
+  <!-- Loading Message -->
+  <div *ngIf="isLoading" class="loading-message">
+    Loading users...
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+    <button class="retry-btn" (click)="retryLoad()" [disabled]="isLoading">
+      {{ isLoading ? 'Retrying...' : 'Retry' }}
+    </button>
+  </div>
+
+
+  <div class="table-wrapper" *ngIf="!isLoading">
     <table class="user-table">
       <thead>
         <tr>
           <th>ID</th>
-          <th>Name</th>
+          <th>Username</th>
           <th>Email</th>
           <th>Role</th>
+          <th>Category</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -17,18 +43,40 @@
       <tbody>
         <tr *ngFor="let user of users">
           <td>{{ user.id }}</td>
-          <td>{{ user.name }}</td>
+          <td>{{ user.username }}</td>
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
+          <td>{{ user.category }}</td>
           <td>
-            <button class="delete-btn" (click)="deleteUser(user.id)">Delete</button>
+            <button class="delete-btn" (click)="deleteUser(user.id!)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage === 0 || isLoading"
+        (click)="onPageChange(currentPage - 1)">
+        {{ isLoading ? 'Loading...' : 'Previous' }}
+      </button>
+      
+      <span class="page-info">
+        Page {{ currentPage + 1 }} of {{ totalPages }} ({{ totalElements }} total)
+      </span>
+      
+      <button 
+        class="page-btn" 
+        [disabled]="currentPage >= totalPages - 1 || isLoading"
+        (click)="onPageChange(currentPage + 1)">
+        {{ isLoading ? 'Loading...' : 'Next' }}
+      </button>
+    </div>
   </div>
 
-  <p *ngIf="users.length === 0" class="no-users">
+  <p *ngIf="users.length === 0 && !isLoading" class="no-users">
     No users available.
   </p>
 

@@ -9,6 +9,11 @@ import java.util.List;
 
 @Data
 @Entity
+@Table(indexes = {
+    @Index(name = "idx_chatsession_user", columnList = "user_id"),
+    @Index(name = "idx_chatsession_started", columnList = "startedAt"),
+    @Index(name = "idx_chatsession_ended", columnList = "endedAt")
+})
 public class ChatSession {
 
     @Id
@@ -18,6 +23,13 @@ public class ChatSession {
     private String sessionName;
     private LocalDateTime startedAt;
     private LocalDateTime endedAt;
+    
+    // Timestamp fields
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     // Many ChatSessions belong to One User
     @ManyToOne
@@ -36,5 +48,30 @@ public class ChatSession {
         this.startedAt = startedAt;
         this.endedAt = endedAt;
         this.user = user;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (startedAt == null) {
+            startedAt = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+        // Only update endedAt if it's being set to a non-null value
+        // This allows for session end tracking
+    }
+
+    // Getters and setters for timestamp fields
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

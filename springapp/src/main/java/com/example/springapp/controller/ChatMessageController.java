@@ -22,6 +22,13 @@ public class ChatMessageController {
     public List<ChatMessage> getAllChatMessages() {
         return chatMessageService.getAllChatMessages();
     }
+
+    @GetMapping("/paginated")
+    public Page<ChatMessage> getAllChatMessagesPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return chatMessageService.getAllChatMessagesPaginated(page, size);
+    }
     @GetMapping("/session/{sessionId}")
 public Page<ChatMessage> getMessagesBySession(
         @PathVariable Long sessionId,

@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common'; // <-- Import CommonModule for *ngIf
+import { AuthService, LoginRequest } from '../../../service/auth-service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class Login {
   errorMessage: string = '';
   showPassword: boolean = false;
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private authService: AuthService) {}
 
   login() {
     if (!this.email || !this.password) {
@@ -59,32 +60,30 @@ export class Login {
       return;
     }
 
-    const loginRequest = {
+    const loginRequest: LoginRequest = {
       usernameOrEmail: this.email,
       password: this.password
     };
 
-    this.http.post<any>('http://localhost:8080/api/auth/login', loginRequest)
-      .subscribe({
-        next: (res) => {
-          // Store user data in localStorage
-          localStorage.setItem('userData', JSON.stringify(res));
-          
-          // Navigate based on user role
-          if (res.role === 'ADMIN') {
-            this.router.navigate(['/admin']);
-          } else if (res.role === 'USER') {
-            const target = sessionStorage.getItem('postLoginRedirect') || '/user';
-            sessionStorage.removeItem('postLoginRedirect');
-            this.router.navigate([target]);
-          } else {
-            this.errorMessage = 'Invalid role received';
-          }
-        },
-        error: (err) => {
-          this.errorMessage = 'Invalid email or password';
-          console.error('Login error:', err);
+    this.authService.login(loginRequest).subscribe({
+      next: (res) => {
+        console.log('Admin login successful:', res);
+        
+        // Navigate based on user role
+        if (res.role === 'ADMIN') {
+          this.router.navigate(['/admin']);
+        } else if (res.role === 'USER') {
+          const target = sessionStorage.getItem('postLoginRedirect') || '/user';
+          sessionStorage.removeItem('postLoginRedirect');
+          this.router.navigate([target]);
+        } else {
+          this.errorMessage = 'Invalid role received';
         }
-      });
+      },
+      error: (err) => {
+        this.errorMessage = 'Invalid email or password';
+        console.error('Login error:', err);
+      }
+    });
   }
 }

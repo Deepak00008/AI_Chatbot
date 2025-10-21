@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import com.example.springapp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -27,6 +27,10 @@ public class ChatSessionService {
         return chatSessionRepo.findAll(pageable);
     }
 
+    public Page<ChatSession> getAllChatSessions(int page, int size) {
+        return chatSessionRepo.findAll(PageRequest.of(page, size));
+    }
+
     public Optional<ChatSession> getChatSessionById(Long id) {
         return chatSessionRepo.findById(id);
     }
@@ -38,7 +42,14 @@ public class ChatSessionService {
     public ChatSession createChatSession(Long userId, ChatSession chatSession) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        
+        // Set the user - timestamps will be automatically set by @PrePersist annotation
         chatSession.setUser(user);
+        
+        System.out.println("Creating chat session for user ID: " + userId);
+        System.out.println("Session name: " + chatSession.getSessionName());
+        System.out.println("Started at: " + chatSession.getStartedAt());
+        
         return chatSessionRepo.save(chatSession);
     }
 
@@ -60,5 +71,40 @@ public class ChatSessionService {
 
     public void deleteChatSession(Long id) {
         chatSessionRepo.deleteById(id);
+    }
+
+    // Method to end a chat session
+    public ChatSession endChatSession(Long id) {
+        return chatSessionRepo.findById(id).map(session -> {
+            if (session.getEndedAt() == null) {
+                session.setEndedAt(LocalDateTime.now());
+                return chatSessionRepo.save(session);
+            }
+            return session; // Already ended
+        }).orElseThrow(() -> new RuntimeException("ChatSession not found with ID: " + id));
+    }
+
+    // Clear all chat sessions (for testing)
+    public void clearAllChatSessions() {
+        chatSessionRepo.deleteAll();
+        System.out.println("All chat sessions cleared");
+    }
+    
+    // Find session by session name
+    public Optional<ChatSession> findBySessionName(String sessionName) {
+        return chatSessionRepo.findBySessionName(sessionName);
+    }
+    
+    // Create chat session (overloaded method for compatibility)
+    public ChatSession createChatSession(ChatSession chatSession) {
+        if (chatSession.getUser() == null) {
+            throw new RuntimeException("User must be set for chat session");
+        }
+        return chatSessionRepo.save(chatSession);
+    }
+    
+    // Get user by ID
+    public User getUserById(Long userId) {
+        return userRepo.findById(userId).orElse(null);
     }
 }
